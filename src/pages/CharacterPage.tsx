@@ -5,6 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchCharacterImageUrl, fetchCharacterSearchResults, fetchPosterUrl } from '../lib/omdb';
 import type { OMDBSearchItem } from '../types';
 import { slugifyTitle } from '../lib/slug';
+import CharacterCard from '../components/CharacterCard';
 
 const LOADING_MESSAGE = 'Loading...';
 const ERROR_MESSAGE = 'Error loading character';
@@ -75,14 +76,7 @@ function checkImage(url: string): Promise<boolean> {
     });
 }
 
-// Simple helpers to present API values
-function isUnknown(val?: string | null): boolean {
-    return !val || val.toLowerCase?.() === 'unknown' || val.toLowerCase?.() === 'n/a';
-}
-function fmt(val?: string | null, unit?: string): string {
-    if (isUnknown(val)) { return 'Unknown'; }
-    return unit ? `${val} ${unit}` : String(val);
-}
+// (formatting helpers moved into CharacterCard)
 
 
 const CharacterPage = () => {
@@ -260,54 +254,33 @@ const CharacterPage = () => {
 
             <section className="mt-4 rounded-2xl ring-1 ring-yellow-900/25 bg-gradient-to-b from-zinc-900/70 to-black/60 shadow-xl shadow-black/30 p-5 md:p-8">
                 <div className="flex flex-col items-center gap-4">
-                    <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-center">{person.name}</h1>
-
-                    {/* Image */}
-                    <div className="w-[200px] max-w-full aspect-[2/3] overflow-hidden rounded-lg ring-1 ring-zinc-800 bg-zinc-900/40">
-                        <img src={imageUrl || FALLBACK_IMAGE} alt={person.name} className="h-full w-full object-cover" />
-                    </div>
-
-                    {/* Badges */}
-                    <div className="flex flex-wrap justify-center gap-2 text-sm text-zinc-300">
-                        <span className="inline-flex items-center rounded-md ring-1 ring-zinc-800 bg-zinc-900/30 px-2 py-1">
-                            {LABEL_SPECIES}: {person.species?.name || 'Unknown'}
-                        </span>
-                        <span className="inline-flex items-center rounded-md ring-1 ring-zinc-800 bg-zinc-900/30 px-2 py-1">
-                            {LABEL_HOMEWORLD}: {person.homeworld?.name || 'Unknown'}
-                        </span>
-                    </div>
-
-                    {/* Info cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full text-base">
-                        <div className="rounded-lg ring-1 ring-zinc-800 p-3 bg-zinc-900/30">
-                            <div className="uppercase tracking-widest text-[10px] text-zinc-400">{LABEL_BIRTH_YEAR}</div>
-                            <div className="text-zinc-100 mt-1">{fmt(person.birthYear)}</div>
-                        </div>
-                        <div className="rounded-lg ring-1 ring-zinc-800 p-3 bg-zinc-900/30">
-                            <div className="uppercase tracking-widest text-[10px] text-zinc-400">{LABEL_GENDER}</div>
-                            <div className="text-zinc-100 mt-1">{fmt(person.gender)}</div>
-                        </div>
-                        <div className="rounded-lg ring-1 ring-zinc-800 p-3 bg-zinc-900/30">
-                            <div className="uppercase tracking-widest text-[10px] text-zinc-400">{LABEL_HEIGHT}</div>
-                            <div className="text-zinc-100 mt-1">{isUnknown(person.height) ? 'Unknown' : `${person.height} cm`}</div>
-                        </div>
-                        <div className="rounded-lg ring-1 ring-zinc-800 p-3 bg-zinc-900/30">
-                            <div className="uppercase tracking-widest text-[10px] text-zinc-400">{LABEL_MASS}</div>
-                            <div className="text-zinc-100 mt-1">{isUnknown(person.mass) ? 'Unknown' : `${person.mass} kg`}</div>
-                        </div>
-                        <div className="rounded-lg ring-1 ring-zinc-800 p-3 bg-zinc-900/30">
-                            <div className="uppercase tracking-widest text-[10px] text-zinc-400">{LABEL_EYE_COLOR}</div>
-                            <div className="text-zinc-100 mt-1">{fmt(person.eyeColor)}</div>
-                        </div>
-                        <div className="rounded-lg ring-1 ring-zinc-800 p-3 bg-zinc-900/30">
-                            <div className="uppercase tracking-widest text-[10px] text-zinc-400">{LABEL_HAIR_COLOR}</div>
-                            <div className="text-zinc-100 mt-1">{fmt(person.hairColor)}</div>
-                        </div>
-                        <div className="rounded-lg ring-1 ring-zinc-800 p-3 bg-zinc-900/30">
-                            <div className="uppercase tracking-widest text-[10px] text-zinc-400">{LABEL_SKIN_COLOR}</div>
-                            <div className="text-zinc-100 mt-1">{fmt(person.skinColor)}</div>
-                        </div>
-                    </div>
+                    <CharacterCard
+                        name={person.name}
+                        imageUrl={imageUrl}
+                        fallbackImage={FALLBACK_IMAGE}
+                        labels={{
+                            species: LABEL_SPECIES,
+                            homeworld: LABEL_HOMEWORLD,
+                            birthYear: LABEL_BIRTH_YEAR,
+                            gender: LABEL_GENDER,
+                            height: LABEL_HEIGHT,
+                            mass: LABEL_MASS,
+                            eyeColor: LABEL_EYE_COLOR,
+                            hairColor: LABEL_HAIR_COLOR,
+                            skinColor: LABEL_SKIN_COLOR,
+                        }}
+                        speciesName={person.species?.name}
+                        homeworldName={person.homeworld?.name}
+                        vitals={{
+                            birthYear: person.birthYear,
+                            gender: person.gender,
+                            height: person.height,
+                            mass: person.mass,
+                            eyeColor: person.eyeColor,
+                            hairColor: person.hairColor,
+                            skinColor: person.skinColor,
+                        }}
+                    />
 
                     {/* Films */}
                     <div className="w-full mt-4">

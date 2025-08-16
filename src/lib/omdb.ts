@@ -41,17 +41,21 @@ export async function fetchCharacterImageUrl(name: string): Promise<string | nul
 
   for (const q of queries) {
     const url = `${OMDB_SEARCH_URL}?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(q)}`;
+    
     try {
-      const res = await fetch(url);
-      if (!res.ok) {
-        continue;
-      }
-  const data: { Search?: Array<{ Poster?: string }>; [k: string]: unknown } = await res.json();
-  const items = Array.isArray(data?.Search) ? data.Search : [];
-  const withPoster = items.find((it) => it?.Poster && it.Poster !== 'N/A');
-      if (withPoster) {
-        return withPoster.Poster as string;
-      }
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            continue;
+        }
+        
+        const data: { Search?: Array<{ Poster?: string }>; [k: string]: unknown } = await res.json();
+        const items = Array.isArray(data?.Search) ? data.Search : [];
+        const withPoster = items.find((it) => it?.Poster && it.Poster !== 'N/A');
+
+        if (withPoster) {
+            return withPoster.Poster as string;
+        }
     } catch {
       // ignore and try next query
     }
