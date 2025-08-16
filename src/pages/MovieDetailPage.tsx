@@ -44,6 +44,20 @@ const MovieDetailPage = () => {
     );
 
     const [poster, setPoster] = useState<string | null>(null);
+    // Normalize the opening crawl: collapse single line-breaks into spaces and
+    // split paragraphs on blank lines so we don't render hard-coded line wraps.
+    const crawlParagraphs: string[] = useMemo(() => {
+        const raw = film?.openingCrawl;
+        if (!raw) { return []; }
+        const normalized = raw
+            .replace(/\r\n?/g, '\n') // CRLF/CR -> LF
+            .trim();
+        // Split on 2+ newlines for paragraphs
+        const blocks = normalized.split(/\n{2,}/);
+        return blocks
+            .map((b) => b.replace(/\n+/g, ' ').replace(/\s{2,}/g, ' ').trim())
+            .filter(Boolean);
+    }, [film?.openingCrawl]);
     useEffect(() => {
         let cancelled = false;
         async function run() {
@@ -69,34 +83,58 @@ const MovieDetailPage = () => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto">
-            <Link className="text-yellow-400" to="/">{BACK}</Link>
-            <div className="mt-4 grid gap-6 md:grid-cols-[240px,1fr]">
-                <div>
-                    <div className="w-full h-auto">
+        <div className="max-w-[800px] w-full mx-auto px-4 sm:px-6">
+            <Link className="text-yellow-400 hover:text-yellow-300 transition-colors" to="/">{BACK}</Link>
+
+            <section className="mt-4 rounded-2xl ring-1 ring-yellow-900/25 bg-gradient-to-b from-zinc-900/70 to-black/60 shadow-xl shadow-black/30 p-5 md:p-8">
+                {/* Stack content vertically and center key elements */}
+                <div className="flex flex-col items-center gap-5 md:gap-6">
+                    {/* Poster */}
+                    <div className="w-[200px] max-w-full aspect-[2/3] overflow-hidden rounded-lg ring-1 ring-zinc-800 bg-zinc-900/40">
                         <img
                             src={poster || FALLBACK_POSTER}
                             alt={film.title}
-                            className="w-full max-w-[200px] h-auto rounded-lg object-contain mx-auto"
+                            className="h-full w-full object-cover"
                         />
                     </div>
-                </div>
-                <div>
-                    <h1 className="text-3xl font-bold mb-2">{film.title}</h1>
-                    <div className="text-sm opacity-80 mb-4">
-                        {LABEL_EPISODE} {film.episodeID} • {film.releaseDate?.slice(0, 4)}
+
+                    {/* Title and meta */}
+                    <div className="text-center">
+                        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-3">
+                            {film.title}
+                        </h1>
+                        <div className="text-base md:text-lg text-zinc-300">
+                            {LABEL_EPISODE} {film.episodeID}
+                            {film.releaseDate && <span> • {film.releaseDate.slice(0, 4)}</span>}
+                        </div>
                     </div>
-                    {film.openingCrawl && (
-                        <p className="whitespace-pre-line leading-relaxed opacity-90 mb-4">{film.openingCrawl}</p>
+
+                    {/* Opening crawl as paragraphs without hard line breaks */}
+                    {crawlParagraphs.length > 0 && (
+                        <div className="max-w-prose text-left space-y-4 text-lg md:text-xl leading-8 text-zinc-200/95">
+                            {crawlParagraphs.map((p, i) => (
+                                <p key={i}>{p}</p>
+                            ))}
+                        </div>
                     )}
-                    <div className="text-sm opacity-80">
-                        {film.director && <div>{LABEL_DIRECTOR}: {film.director}</div>}
+
+                    {/* Details cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full text-base">
+                        {film.director && (
+                            <div className="rounded-lg ring-1 ring-zinc-800 p-3 bg-zinc-900/30">
+                                <div className="uppercase tracking-widest text-[10px] text-zinc-400">{LABEL_DIRECTOR}</div>
+                                <div className="text-zinc-100 mt-1">{film.director}</div>
+                            </div>
+                        )}
                         {film.producers && (
-                            <div>{LABEL_PRODUCERS}: {film.producers.join(', ')}</div>
+                            <div className="rounded-lg ring-1 ring-zinc-800 p-3 bg-zinc-900/30">
+                                <div className="uppercase tracking-widest text-[10px] text-zinc-400">{LABEL_PRODUCERS}</div>
+                                <div className="text-zinc-100 mt-1">{film.producers.join(', ')}</div>
+                            </div>
                         )}
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
     );
 };

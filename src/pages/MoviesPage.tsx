@@ -69,7 +69,7 @@ const MoviesPage = () => {
         <div className="w-full">
             <h1 className="text-2xl font-bold mb-8 text-center">{HEADING_TITLE}</h1>
 
-            <div className="grid gap-4 md:gap-8 [grid-template-columns:repeat(auto-fill,minmax(140px,1fr))] lg:[grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
+            <div className="grid justify-center gap-4 md:gap-8 [grid-template-columns:repeat(auto-fit,minmax(140px,140px))] lg:[grid-template-columns:repeat(auto-fit,minmax(240px,240px))]">
                 {films.map((film) => {
                     const imgUrl = posters[film.id] || FALLBACK_POSTER;
 
