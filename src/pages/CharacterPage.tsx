@@ -5,7 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 import CharacterCard from '../components/CharacterCard';
 import { fetchCharacterImageUrl, fetchCharacterSearchResults, fetchPosterUrl } from '../lib/omdb';
 import { slugifyTitle } from '../lib/slug';
-import { decodeGlobalId } from '../lib/swapiId';
+import { fetchWookieeCharacterImageUrl } from '../lib/wookiee';
 
 import type { OMDBSearchItem, FilmRef, Person } from '../types';
 
@@ -26,7 +26,16 @@ const LABEL_HAIR_COLOR = 'Hair Color';
 const LABEL_SKIN_COLOR = 'Skin Color';
 const FALLBACK_IMAGE = 'https://placehold.co/300x450?text=No+Image';
 const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
-const VISUAL_GUIDE_BASE = `${import.meta.env.VITE_SW_VISUAL_GUIDE_BASE || 'https://starwars-visualguide.com/assets/img'}/characters`;
+
+// Visual Guide disabled (site no longer reliable). Keeping helpers commented for future swap-in.
+// const RAW_VG_BASE = (import.meta.env.VITE_SW_VISUAL_GUIDE_BASE as string | undefined) || 'https://starwars-visualguide.com/assets/img';
+// function normalizeVGBase(base: string): string {
+//     let b = base.trim();
+//     b = b.replace(/\/+$/, '');
+//     if (b.endsWith('/characters')) { b = b.replace(/\/characters$/, ''); }
+//     return b;
+// }
+// const VISUAL_GUIDE_BASE = `${normalizeVGBase(RAW_VG_BASE)}/characters`;
 
 const CHARACTER_QUERY = gql`
     query CharacterById($id: ID!) {
@@ -123,31 +132,31 @@ const CharacterPage = () => {
         let cancelled = false;
         async function run() {
             const name = data?.person?.name;
-
             if (!name) { return; }
 
-            let url: string | null = null;
+            async function tryUrl(candidate: string | null, source: string): Promise<string | null> {
+                if (!candidate) { return null; }
 
-            // 1) Try Star Wars Visual Guide by decoded numeric id
-            const gid = data?.person?.id as string | undefined;
-            if (gid) {
-                const { numericId } = decodeGlobalId(gid);
-                if (numericId) {
-                    const vgUrl = `${VISUAL_GUIDE_BASE}/${numericId}.jpg`;
-                    if (await checkImage(vgUrl)) {
-                        url = vgUrl;
-                    }
-                }
+                const ok = await checkImage(candidate);
+                console.log('[CharacterPage] image check', { source, ok, url: candidate });
+
+                return ok ? candidate : null;
             }
 
-            // 2) Try character-specific image via OMDB
-            if (!url) {
-                url = await fetchCharacterImageUrl(name);
+            let chosen: string | null = null;
+
+            // 1) Wookieepedia (Fandom) image via MediaWiki API
+            const wookiee = await fetchWookieeCharacterImageUrl(name);
+            chosen = await tryUrl(wookiee, 'wookieepedia');
+
+            // 2) OMDB character image (preflight)
+            if (!chosen) {
+                const omdbUrl = await fetchCharacterImageUrl(name);
+                chosen = await tryUrl(omdbUrl, 'omdb-character');
             }
 
-            // 3) Fallback: if no character image found, try first film's poster
-
-            if (!url) {
+            // 3) Fallback: first film's poster (preflight)
+            if (!chosen) {
                 const filmsFromFilms = (data?.person?.filmConnection?.films ?? []) as Array<{ id: string; title: string; releaseDate?: string }>;
                 const filmsFromEdges = ((data?.person?.filmConnection?.edges ?? []) as Array<{ node?: { id: string; title: string; releaseDate?: string } }>)
                     .map((e) => e?.node)
@@ -155,18 +164,26 @@ const CharacterPage = () => {
                 const films = filmsFromFilms.length ? filmsFromFilms : filmsFromEdges;
 
                 if (films.length) {
-                    // Sort by release year ascending and pick the first
                     const sorted = [...films].sort((a, b) => (a.releaseDate || '').localeCompare(b.releaseDate || ''));
                     const first = sorted[0];
 
                     if (first?.title && first?.releaseDate) {
-                        url = await fetchPosterUrl(first.title, first.releaseDate.slice(0, 4));
+                        const poster = await fetchPosterUrl(first.title, first.releaseDate.slice(0, 4));
+                        chosen = await tryUrl(poster, 'omdb-film-poster');
                     }
                 }
             }
 
             if (!cancelled) {
-                setImageUrl(url || FALLBACK_IMAGE);
+                const finalUrl = chosen || FALLBACK_IMAGE;
+
+                if (!chosen) {
+                    console.log('[CharacterPage] image: using fallback image');
+                } else {
+                    console.log('[CharacterPage] image: using', finalUrl);
+                }
+
+                setImageUrl(finalUrl);
             }
         }
         run();
@@ -237,7 +254,15 @@ const CharacterPage = () => {
                 missing.map(async (f) => {
                     const year = f.releaseDate ? f.releaseDate.slice(0, 4) : '';
                     const url = await fetchPosterUrl(f.title, year);
-                    return [f.id, url || FALLBACK_POSTER] as const;
+                    let finalUrl = url || null;
+                    if (finalUrl) {
+                        const ok = await checkImage(finalUrl);
+                        if (!ok) {
+                            console.log('[CharacterPage] film poster 404, falling back', { title: f.title, year, url: finalUrl });
+                            finalUrl = null;
+                        }
+                    }
+                    return [f.id, finalUrl || FALLBACK_POSTER] as const;
                 })
             );
             if (cancelled) { return; }

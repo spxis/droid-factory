@@ -1,3 +1,6 @@
+// Rich person shape used on the Character page
+import type { FilmRef } from './film';
+
 export interface Planet {
   id: string;
   name: string;
@@ -14,9 +17,6 @@ export interface Character {
   species: Species | null;
   homeworld: Planet | null;
 }
-
-// Rich person shape used on the Character page
-import type { FilmRef } from './film';
 
 export interface Person {
   id: string;

@@ -45,6 +45,7 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       'react/react-in-jsx-scope': 'off',
   curly: ['error', 'all'],
+  'import/first': 'error',
       'import/order': [
         'warn',
         {
@@ -53,6 +54,7 @@ export default tseslint.config(
           alphabetize: { order: 'asc', caseInsensitive: true },
         },
       ],
+  'import/newline-after-import': ['warn', { count: 1 }],
       'import/no-unresolved': 'off',
   'import/named': 'off',
   'react/prop-types': 'off',

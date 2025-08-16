@@ -20,6 +20,9 @@ VITE_OMDB_API_KEY=your_omdb_key
 
 # optional: override SWAPI GraphQL endpoint (defaults to swapi-graphql.netlify.app)
 # VITE_SWAPI_GRAPHQL_URL=https://swapi-graphql.netlify.app/graphql
+
+# optional: Wookieepedia MediaWiki API base (defaults to starwars.fandom.com/api.php)
+# VITE_WOOKIEEPEDIA_API_BASE=https://starwars.fandom.com/api.php
 ```
 
 Where to get the OMDb key
@@ -52,6 +55,6 @@ Notes:
 - Tests run under Node; they don’t need the dev server running.
 
 ### Notes
-- Images: character headshots first try Star Wars Visual Guide by SWAPI ID, then OMDb, then a film poster fallback.
+- Images: character headshots first try Wookieepedia (Fandom) via MediaWiki API, then OMDb, then a film poster fallback.
 - If you see missing posters, confirm `VITE_OMDB_API_KEY` is set and valid.
 - Tailwind CSS v4 is configured via the CSS-first approach in `src/index.css`.
