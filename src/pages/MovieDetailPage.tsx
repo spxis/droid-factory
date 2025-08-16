@@ -77,7 +77,7 @@ const MovieDetailPage = () => {
                         <img
                             src={poster || FALLBACK_POSTER}
                             alt={film.title}
-                            className="w-full max-w-xs rounded-lg object-cover"
+                            className="w-full max-w-[200px] h-auto rounded-lg object-contain mx-auto"
                         />
                     </div>
                 </div>

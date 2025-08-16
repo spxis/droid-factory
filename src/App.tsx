@@ -20,7 +20,7 @@ function App() {
           <main className="p-4">
             <Routes>
               <Route path="/" element={<MoviesPage />} />
-              <Route path="/movie/:slug" element={<MovieDetailPage />} />
+              <Route path="/movies/:slug" element={<MovieDetailPage />} />
             </Routes>
           </main>
         </div>
