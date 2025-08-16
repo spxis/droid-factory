@@ -6,6 +6,7 @@ import { fetchCharacterImageUrl, fetchCharacterSearchResults, fetchPosterUrl } f
 import type { OMDBSearchItem } from '../types';
 import { slugifyTitle } from '../lib/slug';
 import CharacterCard from '../components/CharacterCard';
+import { decodeGlobalId } from '../lib/swapiId';
 
 const LOADING_MESSAGE = 'Loading...';
 const ERROR_MESSAGE = 'Error loading character';
@@ -24,6 +25,7 @@ const LABEL_HAIR_COLOR = 'Hair Color';
 const LABEL_SKIN_COLOR = 'Skin Color';
 const FALLBACK_IMAGE = 'https://placehold.co/300x450?text=No+Image';
 const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
+const VISUAL_GUIDE_BASE = 'https://starwars-visualguide.com/assets/img/characters';
 
 const CHARACTER_QUERY = gql`
     query CharacterById($id: ID!) {
@@ -122,9 +124,26 @@ const CharacterPage = () => {
             const name = data?.person?.name;
             if (!name) { return; }
 
-            // Try character-specific search first
-            let url = await fetchCharacterImageUrl(name);
-            // Fallback: if no character image found, try first film's poster
+            let url: string | null = null;
+
+            // 1) Try Star Wars Visual Guide by decoded numeric id
+            const gid = data?.person?.id as string | undefined;
+            if (gid) {
+                const { numericId } = decodeGlobalId(gid);
+                if (numericId) {
+                    const vgUrl = `${VISUAL_GUIDE_BASE}/${numericId}.jpg`;
+                    if (await checkImage(vgUrl)) {
+                        url = vgUrl;
+                    }
+                }
+            }
+
+            // 2) Try character-specific image via OMDB
+            if (!url) {
+                url = await fetchCharacterImageUrl(name);
+            }
+
+            // 3) Fallback: if no character image found, try first film's poster
 
             if (!url) {
                 const filmsFromFilms = (data?.person?.filmConnection?.films ?? []) as Array<{ id: string; title: string; releaseDate?: string }>;
@@ -150,7 +169,7 @@ const CharacterPage = () => {
         }
         run();
         return () => { cancelled = true; };
-    }, [data?.person?.name, data?.person?.filmConnection?.films, data?.person?.filmConnection?.edges]);
+    }, [data?.person?.id, data?.person?.name, data?.person?.filmConnection?.films, data?.person?.filmConnection?.edges]);
 
     // Fetch and store OMDB search results for this character name
     useEffect(() => {

@@ -63,7 +63,17 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
 
             {/* Image */}
             <div className="w-[200px] max-w-full aspect-[2/3] overflow-hidden rounded-lg ring-1 ring-zinc-800 bg-zinc-900/40">
-                <img src={imageUrl || fallbackImage} alt={name} className="h-full w-full object-cover" />
+                <img
+                    src={imageUrl || fallbackImage}
+                    alt={name}
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                        if (e.currentTarget.src !== fallbackImage) {
+                            e.currentTarget.src = fallbackImage;
+                        }
+                    }}
+                    className="h-full w-full object-cover"
+                />
             </div>
 
             {/* Badges */}
