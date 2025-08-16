@@ -1,6 +1,6 @@
 // Reusable FilmCard component
 import { gql, useQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import FilmCard, { Film } from '../components/FilmCard';
 import { fetchPosterUrl } from '../lib/omdb';
@@ -32,32 +32,40 @@ const FILMS_QUERY = gql`
 
 const MoviesPage = () => {
     const { data, loading, error } = useQuery<FilmsQueryResult>(FILMS_QUERY);
-    const films: Film[] = data?.allFilms?.films || [];
+    const films: Film[] = useMemo(() => data?.allFilms?.films || [], [data]);
     const [posters, setPosters] = useState<Record<string, string>>({});
 
     useEffect(() => {
         let cancelled = false;
-        async function fetchAllPosters(): Promise<void> {
-            const newPosters: Record<string, string> = {};
-            await Promise.all(
-                films.map(async (film: Film) => {
-                    if (posters[film.id]) {
-                        newPosters[film.id] = posters[film.id];
-                        return;
-                    }
+
+        const missing = films.filter((film: Film) => !posters[film.id]);
+        if (missing.length === 0) {
+            return () => { cancelled = true; };
+        }
+
+        async function fetchMissing(): Promise<void> {
+            const entries = await Promise.all(
+                missing.map(async (film: Film) => {
                     const url: string | null = await fetchPosterUrl(
                         film.title,
                         film.releaseDate?.slice(0, 4)
                     );
-                    newPosters[film.id] = url || FALLBACK_POSTER;
+                    return [film.id, url || FALLBACK_POSTER] as const;
                 })
             );
-            if (!cancelled) { setPosters(newPosters); }
+            if (cancelled) { return; }
+            setPosters((prev) => {
+                const next = { ...prev } as Record<string, string>;
+                for (const [id, url] of entries) {
+                    next[id] = url;
+                }
+                return next;
+            });
         }
-        if (films.length) { fetchAllPosters(); }
 
+        fetchMissing();
         return () => { cancelled = true; };
-    }, [films]);
+    }, [films, posters]);
 
     if (loading) { return <p>{LOADING_MESSAGE}</p>; }
     if (error) { return <p>{ERROR_MESSAGE}</p>; }
@@ -69,6 +77,7 @@ const MoviesPage = () => {
             <div className="grid gap-4 md:gap-8 [grid-template-columns:repeat(auto-fill,minmax(140px,1fr))] lg:[grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
                 {films.map((film) => {
                     const imgUrl = posters[film.id] || FALLBACK_POSTER;
+
                     return <FilmCard key={film.id} film={film} posterUrl={imgUrl} />;
                 })}
             </div>
