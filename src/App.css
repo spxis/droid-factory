@@ -1,0 +1,9 @@
+/* Minimal app styles; Tailwind supplies most styles */
+
+.logo {
+  height: 6rem;
+}
+
+.logo.react {
+  transform: rotate(20deg);
+}
