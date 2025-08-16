@@ -104,7 +104,7 @@ const MovieDetailPage = () => {
                 {/* Stack content vertically and center key elements */}
                 <div className="flex flex-col items-center gap-5 md:gap-6">
                     {/* Poster */}
-                    <div className="w-[200px] max-w-full aspect-[2/3] overflow-hidden rounded-lg ring-1 ring-zinc-800 bg-zinc-900/40">
+                    <div className="w-[300px] max-w-full aspect-[2/3] overflow-hidden rounded-lg ring-1 ring-zinc-800 bg-zinc-900/40">
                         <img
                             src={poster || FALLBACK_POSTER}
                             alt={film.title}
