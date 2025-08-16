@@ -1,9 +1,10 @@
 
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+
 import client from './lib/apollo';
-import MoviesPage from './pages/MoviesPage';
 import MovieDetailPage from './pages/MovieDetailPage';
+import MoviesPage from './pages/MoviesPage';
 import './App.css';
 
 const PROJECT_TITLE = import.meta.env.VITE_PROJECT_TITLE || 'Star Wars Movies';

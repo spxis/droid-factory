@@ -1,7 +1,8 @@
 // Reusable FilmCard component
 import { gql, useQuery } from '@apollo/client';
-import FilmCard, { Film } from '../components/FilmCard';
 import { useEffect, useState } from 'react';
+
+import FilmCard, { Film } from '../components/FilmCard';
 import { fetchPosterUrl } from '../lib/omdb';
 
 // Apollo query result type
@@ -13,6 +14,8 @@ interface FilmsQueryResult {
 
 // DRY constants
 const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
+const LOADING_MESSAGE = 'Loading...';
+const ERROR_MESSAGE = 'Error loading films';
 
 const FILMS_QUERY = gql`
   query Films {
@@ -49,14 +52,15 @@ const MoviesPage = () => {
                     newPosters[film.id] = url || FALLBACK_POSTER;
                 })
             );
-            if (!cancelled) setPosters(newPosters);
+            if (!cancelled) { setPosters(newPosters); }
         }
-        if (films.length) fetchAllPosters();
+        if (films.length) { fetchAllPosters(); }
+
         return () => { cancelled = true; };
     }, [films]);
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error loading films</p>;
+    if (loading) { return <p>{LOADING_MESSAGE}</p>; }
+    if (error) { return <p>{ERROR_MESSAGE}</p>; }
 
     return (
         <div className="w-full">
