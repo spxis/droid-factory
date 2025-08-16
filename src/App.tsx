@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 import client from './lib/apollo';
 import { SlugMapProvider } from './lib/slugMap';
-import MovieDetailPage from './pages/MovieDetailPage';
 import CharacterPage from './pages/CharacterPage';
+import MovieDetailPage from './pages/MovieDetailPage';
 import MoviesPage from './pages/MoviesPage';
 import './App.css';
 

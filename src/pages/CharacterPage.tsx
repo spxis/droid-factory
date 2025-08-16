@@ -2,8 +2,8 @@ import { gql, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 
-import { slugifyTitle } from '../lib/slug';
 import { fetchCharacterImageUrl, fetchPosterUrl } from '../lib/omdb';
+import { slugifyTitle } from '../lib/slug';
 import { useSlugMap } from '../lib/slugMap';
 
 const LOADING_MESSAGE = 'Loading...';
@@ -70,9 +70,11 @@ const CharacterPage = () => {
             let url = await fetchCharacterImageUrl(name);
             // Fallback: if no character image found, try first film's poster
             if (!url) {
-                const filmsFromFilms = data?.person?.filmConnection?.films ?? [];
-                const filmsFromEdges = (data?.person?.filmConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean);
-                const films: any[] = (filmsFromFilms?.length ? filmsFromFilms : filmsFromEdges) ?? [];
+                const filmsFromFilms = (data?.person?.filmConnection?.films ?? []) as Array<{ id: string; title: string; releaseDate?: string }>;
+                const filmsFromEdges = ((data?.person?.filmConnection?.edges ?? []) as Array<{ node?: { id: string; title: string; releaseDate?: string } }>)
+                    .map((e) => e?.node)
+                    .filter(Boolean) as Array<{ id: string; title: string; releaseDate?: string }>;
+                const films = (filmsFromFilms?.length ? filmsFromFilms : filmsFromEdges) ?? [];
                 if (films.length) {
                     // Sort by release year ascending and pick the first
                     const sorted = [...films].sort((a, b) => (a.releaseDate || '').localeCompare(b.releaseDate || ''));
@@ -88,10 +90,10 @@ const CharacterPage = () => {
         }
         run();
         return () => { cancelled = true; };
-    }, [data?.person?.name]);
+    }, [data?.person?.name, data?.person?.filmConnection?.films, data?.person?.filmConnection?.edges]);
 
-    if (loading || (!passedId && !ready)) return <p>{LOADING_MESSAGE}</p>;
-    if (error) return <p>{ERROR_MESSAGE}</p>;
+    if (loading || (!passedId && !ready)) {return <p>{LOADING_MESSAGE}</p>;}
+    if (error) {return <p>{ERROR_MESSAGE}</p>;}
 
     const person = data?.person;
     if (!person) {
@@ -104,10 +106,10 @@ const CharacterPage = () => {
         );
     }
 
-    const filmsFromFilms = person.filmConnection?.films ?? [];
-    const filmsFromEdges = (person.filmConnection?.edges ?? [])
-        .map((e: any) => e?.node)
-        .filter(Boolean);
+    const filmsFromFilms = (person.filmConnection?.films ?? []) as Array<{ id: string; title: string; releaseDate?: string }>;
+    const filmsFromEdges = ((person.filmConnection?.edges ?? []) as Array<{ node?: { id: string; title: string; releaseDate?: string } }>)
+        .map((e) => e?.node)
+        .filter(Boolean) as Array<{ id: string; title: string; releaseDate?: string }>;
     const films = filmsFromFilms.length ? filmsFromFilms : filmsFromEdges;
 
     return (

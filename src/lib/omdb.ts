@@ -46,9 +46,9 @@ export async function fetchCharacterImageUrl(name: string): Promise<string | nul
       if (!res.ok) {
         continue;
       }
-      const data = await res.json();
-      const items = Array.isArray(data?.Search) ? data.Search : [];
-      const withPoster = items.find((it: any) => it?.Poster && it.Poster !== 'N/A');
+  const data: { Search?: Array<{ Poster?: string }>; [k: string]: unknown } = await res.json();
+  const items = Array.isArray(data?.Search) ? data.Search : [];
+  const withPoster = items.find((it) => it?.Poster && it.Poster !== 'N/A');
       if (withPoster) {
         return withPoster.Poster as string;
       }

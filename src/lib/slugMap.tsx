@@ -2,6 +2,7 @@ import { gql, useQuery } from '@apollo/client';
 import { createContext, useContext, useMemo } from 'react';
 
 import { slugifyTitle } from './slug';
+
 import type { Film } from '../types';
 
 const SLUG_MAP_QUERY = gql`
