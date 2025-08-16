@@ -8,3 +8,9 @@ body {
 	background: #000;
 	color: #fff;
 }
+
+/* Make anchors inherit the surrounding text color so links aren't blue/purple by default */
+a, a:visited, a:link, a:hover, a:active {
+	color: inherit;
+	text-decoration: none;
+}
