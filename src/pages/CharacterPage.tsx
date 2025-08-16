@@ -92,8 +92,8 @@ const CharacterPage = () => {
         return () => { cancelled = true; };
     }, [data?.person?.name, data?.person?.filmConnection?.films, data?.person?.filmConnection?.edges]);
 
-    if (loading || (!passedId && !ready)) {return <p>{LOADING_MESSAGE}</p>;}
-    if (error) {return <p>{ERROR_MESSAGE}</p>;}
+    if (loading || (!passedId && !ready)) { return <p>{LOADING_MESSAGE}</p>; }
+    if (error) { return <p>{ERROR_MESSAGE}</p>; }
 
     const person = data?.person;
     if (!person) {
