@@ -10,6 +10,13 @@ export interface Film {
   producers?: string[];
 }
 
+// Minimal film reference used in person film connections
+export interface FilmRef {
+  id: string;
+  title: string;
+  releaseDate?: string;
+}
+
 // Query result shapes
 export interface FilmsQueryResult {
   allFilms: {

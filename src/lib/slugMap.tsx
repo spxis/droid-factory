@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { gql, useQuery } from '@apollo/client';
 import { createContext, useContext, useMemo } from 'react';
 
@@ -30,10 +31,10 @@ const SlugMapContext = createContext<SlugMap>({ slugToId: {}, idToSlug: {}, peop
 
 export const SlugMapProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { data, loading } = useQuery(SLUG_MAP_QUERY);
-    const films: Pick<Film, 'id' | 'title'>[] = data?.allFilms?.films ?? [];
-    const people: { id: string; name: string }[] = data?.allPeople?.people ?? [];
 
     const value: SlugMap = useMemo(() => {
+        const films: Pick<Film, 'id' | 'title'>[] = data?.allFilms?.films ?? [];
+        const people: { id: string; name: string }[] = data?.allPeople?.people ?? [];
         const slugToId: Record<string, string> = {};
         const idToSlug: Record<string, string> = {};
         const peopleSlugToId: Record<string, string> = {};
@@ -52,7 +53,7 @@ export const SlugMapProvider: React.FC<{ children: React.ReactNode }> = ({ child
         }
 
         return { slugToId, idToSlug, peopleSlugToId, peopleIdToSlug, ready: !loading };
-    }, [films, people, loading]);
+    }, [data, loading]);
 
     return <SlugMapContext.Provider value={value}>{children}</SlugMapContext.Provider>;
 };

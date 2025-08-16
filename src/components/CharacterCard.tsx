@@ -16,7 +16,8 @@ function isUnknown(val?: string | null): boolean {
 }
 
 function fmt(val?: string | null, unit?: string): string {
-    if (isUnknown(val)) return 'Unknown';
+    if (isUnknown(val)) { return 'Unknown'; }
+
     return unit ? `${val} ${unit}` : String(val);
 }
 

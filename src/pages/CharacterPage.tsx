@@ -2,11 +2,12 @@ import { gql, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import { fetchCharacterImageUrl, fetchCharacterSearchResults, fetchPosterUrl } from '../lib/omdb';
-import type { OMDBSearchItem } from '../types';
-import { slugifyTitle } from '../lib/slug';
 import CharacterCard from '../components/CharacterCard';
+import { fetchCharacterImageUrl, fetchCharacterSearchResults, fetchPosterUrl } from '../lib/omdb';
+import { slugifyTitle } from '../lib/slug';
 import { decodeGlobalId } from '../lib/swapiId';
+
+import type { OMDBSearchItem, FilmRef, Person } from '../types';
 
 const LOADING_MESSAGE = 'Loading...';
 const ERROR_MESSAGE = 'Error loading character';
@@ -94,7 +95,7 @@ const CharacterPage = () => {
         }
     }, [finalId]);
 
-    const { data, loading, error } = useQuery<{ person: any }>(CHARACTER_QUERY, {
+    const { data, loading, error } = useQuery<{ person: Person }>(CHARACTER_QUERY, {
         skip: !finalId,
         variables: { id: finalId },
     });
@@ -111,7 +112,7 @@ const CharacterPage = () => {
             console.log('[CharacterPage] raw data:', data);
             console.log('[CharacterPage] person:', data.person);
             console.log('[CharacterPage] films (films):', data.person?.filmConnection?.films);
-            console.log('[CharacterPage] films (edges):', data.person?.filmConnection?.edges?.map?.((e: any) => e?.node));
+            console.log('[CharacterPage] films (edges):', data.person?.filmConnection?.edges?.map?.((e) => e?.node));
         }
     }, [data]);
 
@@ -122,6 +123,7 @@ const CharacterPage = () => {
         let cancelled = false;
         async function run() {
             const name = data?.person?.name;
+
             if (!name) { return; }
 
             let url: string | null = null;
@@ -197,12 +199,12 @@ const CharacterPage = () => {
     }, [data?.person?.name]);
 
     // Compute person and films (merge, dedupe, sort) early so hooks below can depend on them
-    const person = data?.person;
-    const filmsFromFilms = (person?.filmConnection?.films ?? []) as Array<{ id: string; title: string; releaseDate?: string }>;
-    const filmsFromEdges = ((person?.filmConnection?.edges ?? []) as Array<{ node?: { id: string; title: string; releaseDate?: string } }>)
-        .map((e) => e?.node)
-        .filter(Boolean) as Array<{ id: string; title: string; releaseDate?: string }>;
-    let filmsMerged = (filmsFromFilms.length ? filmsFromFilms : filmsFromEdges) as Array<{ id: string; title: string; releaseDate?: string }>;
+    const person: Person | undefined = data?.person;
+    const filmsFromFilms = (person?.filmConnection?.films ?? []) as FilmRef[];
+    const filmsFromEdges = ((person?.filmConnection?.edges ?? []) as Array<{ node?: FilmRef }>)
+        .map((e) => e?.node as FilmRef | undefined)
+        .filter(Boolean) as FilmRef[];
+    let filmsMerged: FilmRef[] = filmsFromFilms.length ? filmsFromFilms : filmsFromEdges;
 
     // Fallback: if still empty, compute films by scanning all films where this character appears
     if (filmsMerged.length === 0 && allFilmsData?.allFilms?.films?.length && person?.id) {
@@ -214,11 +216,11 @@ const CharacterPage = () => {
         if (viaAllFilms.length) {
             console.log('[CharacterPage] using fallback via allFilms; matched', viaAllFilms.length, 'films');
         }
-        filmsMerged = viaAllFilms as Array<{ id: string; title: string; releaseDate?: string }>;
+        filmsMerged = viaAllFilms as FilmRef[];
     }
 
     // Dedupe by id and sort by release year asc
-    const filmMap = new Map<string, { id: string; title: string; releaseDate?: string }>();
+    const filmMap = new Map<string, FilmRef>();
     for (const f of filmsMerged) { filmMap.set(f.id, f); }
     const films = Array.from(filmMap.values()).sort((a, b) => (a.releaseDate || '').localeCompare(b.releaseDate || ''));
 
@@ -238,10 +240,10 @@ const CharacterPage = () => {
                     return [f.id, url || FALLBACK_POSTER] as const;
                 })
             );
-            if (cancelled) return;
+            if (cancelled) { return; }
             setFilmPosters((prev) => {
                 const next = { ...prev } as Record<string, string>;
-                for (const [id, url] of entries) next[id] = url;
+                for (const [id, url] of entries) { next[id] = url; }
                 return next;
             });
         }
@@ -313,7 +315,7 @@ const CharacterPage = () => {
                             <div className="text-sm text-zinc-400">No films found.</div>
                         ) : (
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                                {films.map((f: any) => {
+                                {films.map((f: FilmRef) => {
                                     const poster = filmPosters[f.id] || FALLBACK_POSTER;
                                     const year = f.releaseDate?.slice(0, 4) || '';
                                     return (

@@ -31,10 +31,14 @@ const MoviesPage = () => {
     const { data, loading, error } = useQuery<FilmsQueryResult>(FILMS_QUERY);
     const films: Film[] = useMemo(() => {
         const byList = data?.allFilms?.films ?? [];
-        const byEdges = (data?.allFilms?.edges ?? []).map((e: any) => e?.node).filter(Boolean) as Film[];
+        const byEdges = (data?.allFilms?.edges ?? [])
+            .map((e: { node?: Film }) => e?.node)
+            .filter(Boolean) as Film[];
         const base = byList.length ? byList : byEdges;
+
         return [...base].sort((a, b) => (a.releaseDate || '').localeCompare(b.releaseDate || '')); // ascending by year
     }, [data]);
+
     useEffect(() => {
         if (data) {
             console.log('[MoviesPage] allFilms.totalCount:', data.allFilms?.totalCount);
@@ -61,7 +65,9 @@ const MoviesPage = () => {
                     return [film.id, url || FALLBACK_POSTER] as const;
                 })
             );
+
             if (cancelled) { return; }
+
             setPosters((prev) => {
                 const next = { ...prev } as Record<string, string>;
                 for (const [id, url] of entries) {
