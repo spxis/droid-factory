@@ -11,6 +11,9 @@ interface FilmsQueryResult {
     };
 }
 
+// DRY constants
+const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
+
 const FILMS_QUERY = gql`
   query Films {
     allFilms {
@@ -39,8 +42,11 @@ const MoviesPage = () => {
                         newPosters[film.id] = posters[film.id];
                         return;
                     }
-                    const url: string | null = await fetchPosterUrl(film.title, film.releaseDate?.slice(0, 4));
-                    newPosters[film.id] = url || 'https://placehold.co/400x600?text=No+Poster';
+                    const url: string | null = await fetchPosterUrl(
+                        film.title,
+                        film.releaseDate?.slice(0, 4)
+                    );
+                    newPosters[film.id] = url || FALLBACK_POSTER;
                 })
             );
             if (!cancelled) setPosters(newPosters);
@@ -54,13 +60,11 @@ const MoviesPage = () => {
 
     return (
         <div className="w-full">
-            <h1 className="text-2xl font-bold mb-4 text-center">Star Wars Movies</h1>
+            <h1 className="text-2xl font-bold mb-8 text-center">Star Wars Movies</h1>
 
-            {/* Auto-fill columns with a small min tile width; no gaps */}
-            <div className="grid gap-0 [grid-template-columns:repeat(auto-fill,minmax(130px,1fr))] lg:[grid-template-columns:repeat(auto-fill,minmax(200px,1fr))]">
-
+            <div className="grid gap-4 md:gap-8 [grid-template-columns:repeat(auto-fill,minmax(140px,1fr))] lg:[grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
                 {films.map((film) => {
-                    const imgUrl = posters[film.id] || 'https://placehold.co/400x600?text=No+Poster';
+                    const imgUrl = posters[film.id] || FALLBACK_POSTER;
                     return <FilmCard key={film.id} film={film} posterUrl={imgUrl} />;
                 })}
             </div>
