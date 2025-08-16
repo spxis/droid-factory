@@ -48,3 +48,21 @@ export default tseslint.config({
   },
 })
 ```
+
+## Tailwind CSS v4 (CSS-first)
+
+This project uses Tailwind v4 with the CSS-first approach.
+
+- `postcss.config.js` uses `@tailwindcss/postcss` with `autoprefixer`.
+- `src/index.css` contains:
+  - `@import "tailwindcss";`
+  - `@source "./index.html";`
+  - `@source "./src/**/*.{js,ts,jsx,tsx}";`
+
+If you add JSX/TSX outside `src/`, add another `@source` for those paths.
+
+### Scripts
+
+- `pnpm dev` – start dev server
+- `pnpm build` – typecheck + build
+- `pnpm preview` – preview production build

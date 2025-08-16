@@ -14,6 +14,7 @@ interface FilmCardProps {
 const FilmCard: React.FC<FilmCardProps> = ({ film, posterUrl }) => (
     <Link
         to={`/movies/${slugifyTitle(film.title)}`}
+        state={{ id: film.id }}
         className="block group transition-transform duration-200 hover:scale-105 no-underline"
     >
         <div className="w-full overflow-hidden rounded-lg bg-black">

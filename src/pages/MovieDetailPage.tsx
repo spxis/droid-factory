@@ -1,11 +1,12 @@
 import { gql, useQuery } from '@apollo/client';
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 import { fetchPosterUrl } from '../lib/omdb';
 import { slugifyTitle } from '../lib/slug';
+import { useSlugMap } from '../lib/slugMap';
 
-import type { Film } from '../types';
+import type { Character, FilmDetails } from '../types';
 
 const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
 const LOADING_MESSAGE = 'Loading...';
@@ -18,32 +19,44 @@ const LABEL_EPISODE = 'Episode';
 const LABEL_DIRECTOR = 'Director';
 const LABEL_PRODUCERS = 'Producers';
 
-const FILMS_QUERY = gql`
-  query Films {
-    allFilms {
-      films {
-        id
-        title
-        episodeID
-        releaseDate
-        openingCrawl
-        director
-        producers
-      }
+const FILM_DETAIL_QUERY = gql`
+    query FilmById($id: ID!) {
+        film(id: $id) {
+            id
+            title
+            episodeID
+            releaseDate
+            openingCrawl
+            director
+            producers
+            characterConnection {
+                characters {
+                    id
+                    name
+                    species { id name }
+                    homeworld { id name }
+                }
+            }
+        }
     }
-  }
 `;
 
 const MovieDetailPage = () => {
     const { slug } = useParams();
-    const { data, loading, error } = useQuery(FILMS_QUERY);
-    const films: Film[] = useMemo(() => data?.allFilms?.films || [], [data]);
-    const film: Film | undefined = useMemo(
-        () => films.find((f: Film) => slugifyTitle(f.title) === slug),
-        [films, slug]
-    );
+    const location = useLocation();
+    const { slugToId, ready } = useSlugMap();
+    const passedId = (location.state as { id?: string } | null)?.id;
+    const idFromMap = slug ? slugToId[slug] : undefined;
+    const resolvedId = passedId || idFromMap;
+
+    const { data, loading, error } = useQuery<{ film: FilmDetails }>(FILM_DETAIL_QUERY, {
+        skip: !resolvedId,
+        variables: { id: resolvedId },
+    });
+    const film = data?.film;
 
     const [poster, setPoster] = useState<string | null>(null);
+
     // Normalize the opening crawl: collapse single line-breaks into spaces and
     // split paragraphs on blank lines so we don't render hard-coded line wraps.
     const crawlParagraphs: string[] = useMemo(() => {
@@ -58,6 +71,7 @@ const MovieDetailPage = () => {
             .map((b) => b.replace(/\n+/g, ' ').replace(/\s{2,}/g, ' ').trim())
             .filter(Boolean);
     }, [film?.openingCrawl]);
+
     useEffect(() => {
         let cancelled = false;
         async function run() {
@@ -70,7 +84,7 @@ const MovieDetailPage = () => {
         return () => { cancelled = true; };
     }, [film]);
 
-    if (loading) { return <p>{LOADING_MESSAGE}</p>; }
+    if (loading || !ready) { return <p>{LOADING_MESSAGE}</p>; }
     if (error) { return <p>{ERROR_MESSAGE}</p>; }
     if (!film) {
         return (
@@ -133,6 +147,26 @@ const MovieDetailPage = () => {
                             </div>
                         )}
                     </div>
+
+                    {/* Characters */}
+                    {film.characterConnection?.characters?.length ? (
+                        <div className="w-full mt-6">
+                            <h2 className="text-xl font-bold mb-3">Characters</h2>
+                            <div className="flex flex-wrap gap-2">
+                                {film.characterConnection.characters.map((c: Character) => (
+                                    <Link
+                                        key={c.id}
+                                        to={`/characters/${slugifyTitle(c.name)}`}
+                                        state={{ id: c.id }}
+                                        title={`${c.name}${c.species ? ` • ${c.species.name}` : ''}${c.homeworld ? ` • ${c.homeworld.name}` : ''}`}
+                                        className="inline-flex items-center rounded-md border border-zinc-700 bg-zinc-100 px-3.5 py-0.5 text-xs font-medium text-zinc-900 shadow-sm hover:bg-zinc-200 hover:border-zinc-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-700/40 transition-colors"
+                                    >
+                                        {c.name}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    ) : null}
                 </div>
             </section>
         </div>
