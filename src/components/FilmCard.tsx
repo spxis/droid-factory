@@ -2,12 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { slugifyTitle } from '../lib/slug';
 
-export interface Film {
-    id: string;
-    title: string;
-    episodeID: number;
-    releaseDate: string;
-}
+import type { Film } from '../types';
 
 interface FilmCardProps {
     film: Film;

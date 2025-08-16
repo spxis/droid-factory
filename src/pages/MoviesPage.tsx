@@ -2,15 +2,10 @@
 import { gql, useQuery } from '@apollo/client';
 import { useEffect, useMemo, useState } from 'react';
 
-import FilmCard, { Film } from '../components/FilmCard';
+import FilmCard from '../components/FilmCard';
 import { fetchPosterUrl } from '../lib/omdb';
 
-// Apollo query result type
-interface FilmsQueryResult {
-    allFilms: {
-        films: Film[];
-    };
-}
+import type { Film, FilmsQueryResult } from '../types';
 
 // DRY constants
 const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';

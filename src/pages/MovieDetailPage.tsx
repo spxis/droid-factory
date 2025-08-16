@@ -5,7 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchPosterUrl } from '../lib/omdb';
 import { slugifyTitle } from '../lib/slug';
 
-import type { Film as BaseFilm } from '../components/FilmCard';
+import type { Film } from '../types';
 
 const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
 const LOADING_MESSAGE = 'Loading...';
@@ -26,12 +26,6 @@ const FILMS_QUERY = gql`
     }
   }
 `;
-
-type Film = BaseFilm & {
-    openingCrawl?: string;
-    director?: string;
-    producers?: string[];
-};
 
 const MovieDetailPage = () => {
     const { slug } = useParams();
