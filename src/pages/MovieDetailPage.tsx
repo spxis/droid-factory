@@ -2,8 +2,7 @@ import { gql, useQuery } from '@apollo/client';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 
-import { fetchPosterUrl } from '../lib/omdb';
-import { slugifyTitle } from '../lib/slug';
+import { fetchMovieDetails } from '../lib/omdb';
 import { useSlugMap } from '../lib/slugMap';
 
 import type { Character, FilmDetails } from '../types';
@@ -56,6 +55,7 @@ const MovieDetailPage = () => {
     const film = data?.film;
 
     const [poster, setPoster] = useState<string | null>(null);
+    const [omdb, setOmdb] = useState<{ plot?: string; metascore?: string; genre?: string; runtime?: string; imdbID?: string; imdbRating?: string } | null>(null);
 
     // Normalize the opening crawl: collapse single line-breaks into spaces and
     // split paragraphs on blank lines so we don't render hard-coded line wraps.
@@ -76,9 +76,17 @@ const MovieDetailPage = () => {
         let cancelled = false;
         async function run() {
             if (!film) { return; }
-            const url = await fetchPosterUrl(film.title, film.releaseDate?.slice(0, 4));
+            const details = await fetchMovieDetails(film.title, film.releaseDate?.slice(0, 4));
             if (cancelled) { return; }
-            setPoster(url || FALLBACK_POSTER);
+            setPoster(details?.Poster || FALLBACK_POSTER);
+            setOmdb({
+                plot: details?.Plot,
+                metascore: details?.Metascore,
+                genre: details?.Genre,
+                runtime: details?.Runtime,
+                imdbID: details?.imdbID,
+                imdbRating: details?.imdbRating,
+            });
         }
         run();
         return () => { cancelled = true; };
@@ -120,7 +128,14 @@ const MovieDetailPage = () => {
                         <div className="text-base md:text-lg text-zinc-300">
                             {LABEL_EPISODE} {film.episodeID}
                             {film.releaseDate && <span> • {film.releaseDate.slice(0, 4)}</span>}
+                            {omdb?.imdbRating && <span> • IMDb {omdb.imdbRating}</span>}
                         </div>
+                        {omdb?.genre && (
+                            <div className="mt-1 text-sm text-zinc-400">{omdb.genre}</div>
+                        )}
+                        {omdb?.runtime && (
+                            <div className="mt-0.5 text-sm text-zinc-400">{omdb.runtime}</div>
+                        )}
                     </div>
 
                     {/* Opening crawl as paragraphs without hard line breaks */}
@@ -146,7 +161,31 @@ const MovieDetailPage = () => {
                                 <div className="text-zinc-100 mt-1">{film.producers.join(', ')}</div>
                             </div>
                         )}
+                        {omdb?.metascore && (
+                            <div className="rounded-lg ring-1 ring-zinc-800 p-3 bg-zinc-900/30">
+                                <div className="uppercase tracking-widest text-[10px] text-zinc-400">Metascore</div>
+                                <div className="text-zinc-100 mt-1">{omdb.metascore}</div>
+                            </div>
+                        )}
                     </div>
+
+                    {/* OMDB plot and IMDb link */}
+                    {omdb?.plot && (
+                        <div className="max-w-prose text-left mt-4 text-base md:text-lg leading-7 text-zinc-200/95">
+                            <h3 className="text-lg font-semibold mb-1">Plot</h3>
+                            <p>{omdb.plot}</p>
+                            {omdb?.imdbID && (
+                                <a
+                                    href={`https://www.imdb.com/title/${omdb.imdbID}/`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-block mt-2 text-yellow-300 hover:text-yellow-200"
+                                >
+                                    View on IMDb
+                                </a>
+                            )}
+                        </div>
+                    )}
 
                     {/* Characters */}
                     {film.characterConnection?.characters?.length ? (
@@ -156,8 +195,7 @@ const MovieDetailPage = () => {
                                 {film.characterConnection.characters.map((c: Character) => (
                                     <Link
                                         key={c.id}
-                                        to={`/characters/${slugifyTitle(c.name)}`}
-                                        state={{ id: c.id }}
+                                        to={`/characters/${c.id}`}
                                         title={`${c.name}${c.species ? ` • ${c.species.name}` : ''}${c.homeworld ? ` • ${c.homeworld.name}` : ''}`}
                                         className="inline-flex items-center rounded-md border border-zinc-700 bg-zinc-100 px-3.5 py-0.5 text-xs font-medium text-zinc-900 shadow-sm transition-colors transition-transform duration-200 hover:bg-white hover:text-black hover:border-zinc-500 hover:shadow-md hover:scale-105 hover:ring-2 hover:ring-yellow-700/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-700/40"
                                     >

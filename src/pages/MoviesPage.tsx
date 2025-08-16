@@ -13,21 +13,33 @@ const ERROR_MESSAGE = 'Error loading films';
 const HEADING_TITLE = 'Star Wars Movies';
 
 const FILMS_QUERY = gql`
-  query Films {
-    allFilms {
-      films {
-        id
-        title
-        episodeID
-        releaseDate
-      }
+    query Films {
+        allFilms {
+            films {
+                id
+                title
+                episodeID
+                releaseDate
+            }
+            edges { node { id title episodeID releaseDate } }
+            totalCount
+        }
     }
-  }
 `;
 
 const MoviesPage = () => {
     const { data, loading, error } = useQuery<FilmsQueryResult>(FILMS_QUERY);
-    const films: Film[] = useMemo(() => data?.allFilms?.films || [], [data]);
+    const films: Film[] = useMemo(() => {
+        const byList = data?.allFilms?.films ?? [];
+        const byEdges = (data?.allFilms?.edges ?? []).map((e: any) => e?.node).filter(Boolean) as Film[];
+        return byList.length ? byList : byEdges;
+    }, [data]);
+    useEffect(() => {
+        if (data) {
+            console.log('[MoviesPage] allFilms.totalCount:', data.allFilms?.totalCount);
+            console.log('[MoviesPage] films count:', films.length);
+        }
+    }, [data, films]);
     const [posters, setPosters] = useState<Record<string, string>>({});
 
     useEffect(() => {

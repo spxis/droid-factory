@@ -10,7 +10,7 @@ const SLUG_MAP_QUERY = gql`
     allFilms {
       films { id title }
     }
-    allPeople(first: 100) {
+    allPeople(first: 200) {
       people { id name }
     }
   }

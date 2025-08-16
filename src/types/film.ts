@@ -13,6 +13,8 @@ export interface Film {
 // Query result shapes
 export interface FilmsQueryResult {
   allFilms: {
-    films: Film[];
+  films?: Film[];
+  edges?: { node: Film }[];
+  totalCount?: number;
   };
 }

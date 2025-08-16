@@ -59,3 +59,86 @@ export async function fetchCharacterImageUrl(name: string): Promise<string | nul
 
   return null;
 }
+
+// Full OMDB search results for a character name (deduped, with posters only)
+export interface OMDBSearchItem {
+  Title: string;
+  Year?: string;
+  Poster?: string;
+  imdbID: string;
+  Type?: string;
+}
+
+export async function fetchCharacterSearchResults(name: string): Promise<OMDBSearchItem[]> {
+  if (!OMDB_API_KEY) {
+    return [];
+  }
+
+  const queries = [name, `Star Wars ${name}`];
+  const seen = new Set<string>();
+  const results: OMDBSearchItem[] = [];
+
+  for (const q of queries) {
+    const url = `${OMDB_SEARCH_URL}?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(q)}`;
+
+    try {
+      const res = await fetch(url);
+
+      if (!res.ok) {continue;}
+
+      const data: { Search?: OMDBSearchItem[] } = await res.json();
+      const items = Array.isArray(data?.Search) ? data.Search : [];
+
+      for (const it of items) {
+        if (!it || !it.imdbID) {continue;}
+        if (!it.Poster || it.Poster === 'N/A') {continue;}
+        if (seen.has(it.imdbID)) {continue;}
+
+        seen.add(it.imdbID);
+        results.push(it);
+      }
+    } catch {
+      // ignore this query
+    }
+  }
+
+  return results;
+}
+
+// Detailed OMDB response for a movie title + year
+export interface OMDBMovieDetails {
+  Title: string;
+  Year?: string;
+  Poster?: string;
+  Plot?: string;
+  Metascore?: string; // e.g. "90"
+  Genre?: string;     // e.g. "Action, Adventure, Fantasy"
+  Runtime?: string;   // e.g. "121 min"
+  Rated?: string;     // e.g. "PG"
+  Released?: string;  // e.g. "25 May 1977"
+  imdbID: string;
+  imdbRating?: string; // e.g. "8.6"
+}
+
+export async function fetchMovieDetails(title: string, year?: string): Promise<OMDBMovieDetails | null> {
+  if (!OMDB_API_KEY) {
+    return null;
+  }
+
+  const url = `${OMDB_SEARCH_URL}?apikey=${OMDB_API_KEY}&t=${encodeURIComponent(title)}${year ? `&y=${year}` : ''}`;
+  try {
+    const res = await fetch(url);
+    
+    if (!res.ok) {return null;}
+
+    const data = await res.json();
+
+    if (data?.Response === 'True' && data?.imdbID) {
+      return data as OMDBMovieDetails;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
