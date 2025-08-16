@@ -32,7 +32,8 @@ const MoviesPage = () => {
     const films: Film[] = useMemo(() => {
         const byList = data?.allFilms?.films ?? [];
         const byEdges = (data?.allFilms?.edges ?? []).map((e: any) => e?.node).filter(Boolean) as Film[];
-        return byList.length ? byList : byEdges;
+        const base = byList.length ? byList : byEdges;
+        return [...base].sort((a, b) => (a.releaseDate || '').localeCompare(b.releaseDate || '')); // ascending by year
     }, [data]);
     useEffect(() => {
         if (data) {

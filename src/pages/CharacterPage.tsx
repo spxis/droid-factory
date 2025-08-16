@@ -2,7 +2,8 @@ import { gql, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import { fetchCharacterImageUrl, fetchCharacterSearchResults, fetchPosterUrl, type OMDBSearchItem } from '../lib/omdb';
+import { fetchCharacterImageUrl, fetchCharacterSearchResults, fetchPosterUrl } from '../lib/omdb';
+import type { OMDBSearchItem } from '../types';
 import { slugifyTitle } from '../lib/slug';
 
 const LOADING_MESSAGE = 'Loading...';
@@ -20,6 +21,8 @@ const LABEL_MASS = 'Mass';
 const LABEL_EYE_COLOR = 'Eye Color';
 const LABEL_HAIR_COLOR = 'Hair Color';
 const LABEL_SKIN_COLOR = 'Skin Color';
+const FALLBACK_IMAGE = 'https://placehold.co/300x450?text=No+Image';
+const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
 
 const CHARACTER_QUERY = gql`
     query CharacterById($id: ID!) {
@@ -118,8 +121,6 @@ const CharacterPage = () => {
 
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [omdbResults, setOmdbResults] = useState<OMDBSearchItem[]>([]);
-    const FALLBACK_IMAGE = 'https://placehold.co/300x450?text=No+Image';
-    const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
 
     useEffect(() => {
         let cancelled = false;
@@ -142,6 +143,7 @@ const CharacterPage = () => {
                     // Sort by release year ascending and pick the first
                     const sorted = [...films].sort((a, b) => (a.releaseDate || '').localeCompare(b.releaseDate || ''));
                     const first = sorted[0];
+
                     if (first?.title && first?.releaseDate) {
                         url = await fetchPosterUrl(first.title, first.releaseDate.slice(0, 4));
                     }
@@ -195,6 +197,7 @@ const CharacterPage = () => {
         const viaAllFilms = allFilmsData.allFilms.films
             .filter((f) => (f.characterConnection?.characters ?? []).some((ch) => ch?.id === personId))
             .map((f) => ({ id: f.id, title: f.title, releaseDate: f.releaseDate }));
+
         if (viaAllFilms.length) {
             console.log('[CharacterPage] using fallback via allFilms; matched', viaAllFilms.length, 'films');
         }
@@ -211,7 +214,9 @@ const CharacterPage = () => {
     useEffect(() => {
         let cancelled = false;
         const missing = films.filter((f) => !filmPosters[f.id]);
+
         if (missing.length === 0) { return () => { cancelled = true; }; }
+
         async function run() {
             const entries = await Promise.all(
                 missing.map(async (f) => {
@@ -227,6 +232,7 @@ const CharacterPage = () => {
                 return next;
             });
         }
+
         run();
         return () => { cancelled = true; };
     }, [films, filmPosters]);

@@ -61,13 +61,7 @@ export async function fetchCharacterImageUrl(name: string): Promise<string | nul
 }
 
 // Full OMDB search results for a character name (deduped, with posters only)
-export interface OMDBSearchItem {
-  Title: string;
-  Year?: string;
-  Poster?: string;
-  imdbID: string;
-  Type?: string;
-}
+import type { OMDBSearchItem, OMDBMovieDetails } from '../types';
 
 export async function fetchCharacterSearchResults(name: string): Promise<OMDBSearchItem[]> {
   if (!OMDB_API_KEY) {
@@ -106,20 +100,6 @@ export async function fetchCharacterSearchResults(name: string): Promise<OMDBSea
 }
 
 // Detailed OMDB response for a movie title + year
-export interface OMDBMovieDetails {
-  Title: string;
-  Year?: string;
-  Poster?: string;
-  Plot?: string;
-  Metascore?: string; // e.g. "90"
-  Genre?: string;     // e.g. "Action, Adventure, Fantasy"
-  Runtime?: string;   // e.g. "121 min"
-  Rated?: string;     // e.g. "PG"
-  Released?: string;  // e.g. "25 May 1977"
-  imdbID: string;
-  imdbRating?: string; // e.g. "8.6"
-}
-
 export async function fetchMovieDetails(title: string, year?: string): Promise<OMDBMovieDetails | null> {
   if (!OMDB_API_KEY) {
     return null;
