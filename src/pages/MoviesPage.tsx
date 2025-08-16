@@ -7,10 +7,10 @@ import { fetchPosterUrl } from '../lib/omdb';
 
 import type { Film, FilmsQueryResult } from '../types';
 
-// DRY constants
 const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
 const LOADING_MESSAGE = 'Loading...';
 const ERROR_MESSAGE = 'Error loading films';
+const HEADING_TITLE = 'Star Wars Movies';
 
 const FILMS_QUERY = gql`
   query Films {
@@ -67,7 +67,7 @@ const MoviesPage = () => {
 
     return (
         <div className="w-full">
-            <h1 className="text-2xl font-bold mb-8 text-center">Star Wars Movies</h1>
+            <h1 className="text-2xl font-bold mb-8 text-center">{HEADING_TITLE}</h1>
 
             <div className="grid gap-4 md:gap-8 [grid-template-columns:repeat(auto-fill,minmax(140px,1fr))] lg:[grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]">
                 {films.map((film) => {

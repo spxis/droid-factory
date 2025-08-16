@@ -4,6 +4,8 @@ import { slugifyTitle } from '../lib/slug';
 
 import type { Film } from '../types';
 
+const LABEL_EPISODE = 'Episode';
+
 interface FilmCardProps {
     film: Film;
     posterUrl: string;
@@ -27,7 +29,7 @@ const FilmCard: React.FC<FilmCardProps> = ({ film, posterUrl }) => (
         {/* Caption beneath poster, centered like Sonarr/Radarr */}
         <div className="mt-2 text-center text-white">
             <div className="font-bold text-sm truncate">{film.title}</div>
-            <div className="text-xs opacity-80">Episode {film.episodeID}</div>
+            <div className="text-xs opacity-80">{LABEL_EPISODE} {film.episodeID}</div>
         </div>
     </Link>
 );

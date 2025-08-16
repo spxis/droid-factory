@@ -10,6 +10,13 @@ import type { Film } from '../types';
 const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
 const LOADING_MESSAGE = 'Loading...';
 const ERROR_MESSAGE = 'Error loading film';
+const NOT_FOUND_TITLE = 'Not Found';
+const NOT_FOUND_BODY = "We couldn't find that movie.";
+const BACK_TO_LIST = '← Back to list';
+const BACK = '← Back';
+const LABEL_EPISODE = 'Episode';
+const LABEL_DIRECTOR = 'Director';
+const LABEL_PRODUCERS = 'Producers';
 
 const FILMS_QUERY = gql`
   query Films {
@@ -54,20 +61,19 @@ const MovieDetailPage = () => {
     if (!film) {
         return (
             <div>
-                <h1 className="text-2xl font-bold mb-4">Not Found</h1>
-                <p className="mb-4">We couldn&apos;t find that movie.</p>
-                <Link className="text-yellow-400" to="/">← Back to list</Link>
+                <h1 className="text-2xl font-bold mb-4">{NOT_FOUND_TITLE}</h1>
+                <p className="mb-4">{NOT_FOUND_BODY}</p>
+                <Link className="text-yellow-400" to="/">{BACK_TO_LIST}</Link>
             </div>
         );
     }
 
     return (
         <div className="max-w-4xl mx-auto">
-            <Link className="text-yellow-400" to="/">← Back</Link>
+            <Link className="text-yellow-400" to="/">{BACK}</Link>
             <div className="mt-4 grid gap-6 md:grid-cols-[240px,1fr]">
                 <div>
                     <div className="w-full h-auto">
-                        {/* Poster */}
                         <img
                             src={poster || FALLBACK_POSTER}
                             alt={film.title}
@@ -78,15 +84,15 @@ const MovieDetailPage = () => {
                 <div>
                     <h1 className="text-3xl font-bold mb-2">{film.title}</h1>
                     <div className="text-sm opacity-80 mb-4">
-                        Episode {film.episodeID} • {film.releaseDate?.slice(0, 4)}
+                        {LABEL_EPISODE} {film.episodeID} • {film.releaseDate?.slice(0, 4)}
                     </div>
                     {film.openingCrawl && (
                         <p className="whitespace-pre-line leading-relaxed opacity-90 mb-4">{film.openingCrawl}</p>
                     )}
                     <div className="text-sm opacity-80">
-                        {film.director && <div>Director: {film.director}</div>}
+                        {film.director && <div>{LABEL_DIRECTOR}: {film.director}</div>}
                         {film.producers && (
-                            <div>Producers: {film.producers.join(', ')}</div>
+                            <div>{LABEL_PRODUCERS}: {film.producers.join(', ')}</div>
                         )}
                     </div>
                 </div>
