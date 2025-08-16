@@ -25,7 +25,7 @@ const LABEL_HAIR_COLOR = 'Hair Color';
 const LABEL_SKIN_COLOR = 'Skin Color';
 const FALLBACK_IMAGE = 'https://placehold.co/300x450?text=No+Image';
 const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
-const VISUAL_GUIDE_BASE = 'https://starwars-visualguide.com/assets/img/characters';
+const VISUAL_GUIDE_BASE = `${import.meta.env.VITE_SW_VISUAL_GUIDE_BASE || 'https://starwars-visualguide.com/assets/img'}/characters`;
 
 const CHARACTER_QUERY = gql`
     query CharacterById($id: ID!) {
