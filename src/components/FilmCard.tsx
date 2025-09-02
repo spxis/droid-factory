@@ -17,10 +17,11 @@ const FilmCard: React.FC<FilmCardProps> = ({ film, posterUrl }) => {
       className="block group transition-transform duration-200 hover:scale-105 no-underline max-w-[300px] w-full mx-auto"
     >
       <div className="w-full overflow-hidden rounded-lg ring-1 ring-zinc-800 bg-zinc-900/40">
-        <div className="w-full aspect-[2/3]">
+        <div className="w-full aspect-[2/3] bg-zinc-900">
           <img
             src={posterUrl}
             alt={film.title}
+            loading="lazy"
             className="w-full h-full object-cover block"
           />
         </div>

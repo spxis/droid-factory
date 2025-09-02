@@ -6,7 +6,7 @@ import FilmCard from '@/components/FilmCard';
 import { useFilmPosters } from '@/hooks/useFilmPosters';
 import { useFilms } from '@/hooks/useFilms';
 
-const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
+const FALLBACK_POSTER = 'https://placehold.co/400x600/0b0b0b/9ca3af?text=No+Poster';
 const LOADING_MESSAGE = 'Loading...';
 const ERROR_MESSAGE = 'Error loading films';
 const HEADING_TITLE = 'Star Wars Movies';
