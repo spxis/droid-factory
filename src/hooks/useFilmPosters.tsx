@@ -71,7 +71,7 @@ const useFilmPosters = (films: Film[]) => {
 
     fetchMissing();
     return () => { cancelled = true; };
-  }, [filmKeys]);
+  }, [filmKeys, posters, films]);
 
   return posters;
 

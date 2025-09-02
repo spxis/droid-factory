@@ -60,7 +60,7 @@ function useOmdbDetails(title?: string, releaseDate?: string) {
       cancelled = true;
     };
 
-  }, [key]);
+  }, [key, title, year]);
 
   return { poster, omdb };
 }

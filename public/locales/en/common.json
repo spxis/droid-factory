@@ -1,0 +1,51 @@
+{
+  "app": {
+    "title": "Star Wars Movies"
+  },
+  "movies": {
+    "heading": "Star Wars Movies",
+    "loading": "Loading...",
+    "error": "Error loading films"
+  },
+  "detail": {
+    "loading": "Loading...",
+    "error": "Error loading film",
+    "notFoundTitle": "Not Found",
+    "notFoundBody": "We couldn't find that movie.",
+    "backToList": "← Back to list",
+    "back": "← Back",
+    "labels": {
+      "episode": "Episode",
+      "director": "Director",
+      "producers": "Producers",
+      "details": "Details",
+      "year": "Year",
+      "genre": "Genre",
+      "runtime": "Runtime",
+      "imdbRating": "IMDb Rating",
+      "metascore": "Metascore",
+      "openingCrawl": "Opening Crawl",
+      "characters": "Characters",
+      "plot": "Plot",
+      "viewOnImdb": "View on IMDb"
+    }
+  },
+  "notFound": {
+    "title": "404",
+    "message": "This is not the page you’re looking for.",
+    "goHome": "Go home"
+  },
+  "character": {
+    "labels": {
+      "species": "Species",
+      "homeworld": "Homeworld",
+      "birthYear": "Birth Year",
+      "gender": "Gender",
+      "height": "Height",
+      "mass": "Mass",
+      "eyeColor": "Eye Color",
+      "hairColor": "Hair Color",
+      "skinColor": "Skin Color"
+    }
+  }
+}

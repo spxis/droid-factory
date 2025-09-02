@@ -1,19 +1,21 @@
 import { memo, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { DetailsCardProps } from '@/types';
 
 function DetailsCard({ film, labels, omdb }: DetailsCardProps) {
+  const { t } = useTranslation();
   const L = useMemo(() => ({
-    episode: 'Episode',
-    director: 'Director',
-    producers: 'Producers',
+    episode: t('detail.labels.episode'),
+    director: t('detail.labels.director'),
+    producers: t('detail.labels.producers'),
     ...labels,
-  } as const), [labels]);
+  } as const), [labels, t]);
   const year = useMemo(() => (film.releaseDate ? film.releaseDate.slice(0, 4) : null), [film.releaseDate]);
 
   return (
     <div className="rounded-xl ring-1 ring-zinc-800 bg-zinc-900/40 p-4">
-      <h3 className="text-lg font-semibold mb-2">Details</h3>
+      <h3 className="text-lg font-semibold mb-2">{t('detail.labels.details', 'Details')}</h3>
       <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
         <div>
           <dt className="uppercase tracking-widest text-[10px] text-zinc-400">{L.episode}</dt>
@@ -21,7 +23,7 @@ function DetailsCard({ film, labels, omdb }: DetailsCardProps) {
         </div>
         {year && (
           <div>
-            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">Year</dt>
+            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">{t('detail.labels.year', 'Year')}</dt>
             <dd className="text-zinc-100 mt-0.5">{year}</dd>
           </div>
         )}
@@ -39,25 +41,25 @@ function DetailsCard({ film, labels, omdb }: DetailsCardProps) {
         )}
         {omdb?.genre && (
           <div>
-            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">Genre</dt>
+            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">{t('detail.labels.genre')}</dt>
             <dd className="text-zinc-100 mt-0.5">{omdb.genre}</dd>
           </div>
         )}
         {omdb?.runtime && (
           <div>
-            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">Runtime</dt>
+            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">{t('detail.labels.runtime')}</dt>
             <dd className="text-zinc-100 mt-0.5">{omdb.runtime}</dd>
           </div>
         )}
         {omdb?.imdbRating && (
           <div>
-            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">IMDb Rating</dt>
+            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">{t('detail.labels.imdbRating')}</dt>
             <dd className="text-zinc-100 mt-0.5">{omdb.imdbRating}</dd>
           </div>
         )}
         {omdb?.metascore && (
           <div>
-            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">Metascore</dt>
+            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">{t('detail.labels.metascore')}</dt>
             <dd className="text-zinc-100 mt-0.5">{omdb.metascore}</dd>
           </div>
         )}

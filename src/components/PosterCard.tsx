@@ -12,10 +12,10 @@ function PosterCard({ src, alt, fallbackSrc }: PosterCardProps) {
           src={url}
           alt={alt}
           loading="eager"
-          fetchPriority="high"
           decoding="async"
           className="h-full w-full object-cover bg-zinc-900 opacity-0 transition-opacity duration-300"
           onLoad={(e) => { e.currentTarget.classList.remove('opacity-0'); }}
+          {...({ fetchpriority: 'high' } as Record<string, string>)}
         />
       </div>
     </div>

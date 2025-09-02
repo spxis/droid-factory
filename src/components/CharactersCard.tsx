@@ -1,16 +1,18 @@
 import { memo, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import type { CharactersCardProps } from '@/types';
 
 function CharactersCard({ characters }: CharactersCardProps) {
-  const list = characters ?? [];
+  const { t } = useTranslation();
+  const list = useMemo(() => characters ?? [], [characters]);
   const sorted = useMemo(() => [...list].sort((a, b) => a.name.localeCompare(b.name)), [list]);
   if (list.length === 0) { return null; }
 
   return (
     <div className="rounded-xl ring-1 ring-zinc-800 bg-zinc-900/40 p-4">
-      <h3 className="text-lg font-semibold mb-3">Characters</h3>
+      <h3 className="text-lg font-semibold mb-3">{t('detail.labels.characters')}</h3>
       <div className="flex flex-wrap gap-2">
         {sorted.map((c) => (
           <Link
