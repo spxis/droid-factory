@@ -1,11 +1,10 @@
-import { gql, useQuery } from '@apollo/client';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 
 import { fetchMovieDetails } from '../lib/omdb';
-import { useSlugMap } from '../lib/slugMap';
 
-import type { Character, FilmDetails } from '../types';
+import type { Character } from '../types';
+import { useFilmBySlug } from '../hooks/useFilmBySlug';
 
 const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
 const LOADING_MESSAGE = 'Loading...';
@@ -18,41 +17,12 @@ const LABEL_EPISODE = 'Episode';
 const LABEL_DIRECTOR = 'Director';
 const LABEL_PRODUCERS = 'Producers';
 
-const FILM_DETAIL_QUERY = gql`
-    query FilmById($id: ID!) {
-        film(id: $id) {
-            id
-            title
-            episodeID
-            releaseDate
-            openingCrawl
-            director
-            producers
-            characterConnection {
-                characters {
-                    id
-                    name
-                    species { id name }
-                    homeworld { id name }
-                }
-            }
-        }
-    }
-`;
-
 const MovieDetailPage = () => {
     const { slug } = useParams();
     const location = useLocation();
-    const { slugToId, ready } = useSlugMap();
     const passedId = (location.state as { id?: string } | null)?.id;
-    const idFromMap = slug ? slugToId[slug] : undefined;
-    const resolvedId = passedId || idFromMap;
 
-    const { data, loading, error } = useQuery<{ film: FilmDetails }>(FILM_DETAIL_QUERY, {
-        skip: !resolvedId,
-        variables: { id: resolvedId },
-    });
-    const film = data?.film;
+    const { film, loading, error } = useFilmBySlug(slug, passedId);
 
     const [poster, setPoster] = useState<string | null>(null);
     const [omdb, setOmdb] = useState<{ plot?: string; metascore?: string; genre?: string; runtime?: string; imdbID?: string; imdbRating?: string } | null>(null);
@@ -62,9 +32,11 @@ const MovieDetailPage = () => {
     const crawlParagraphs: string[] = useMemo(() => {
         const raw = film?.openingCrawl;
         if (!raw) { return []; }
+
         const normalized = raw
             .replace(/\r\n?/g, '\n') // CRLF/CR -> LF
             .trim();
+
         // Split on 2+ newlines for paragraphs
         const blocks = normalized.split(/\n{2,}/);
         return blocks
