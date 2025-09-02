@@ -5,7 +5,7 @@ import type { DetailsCardProps } from '@/types';
 
 function DetailsCard({ film, labels, omdb }: DetailsCardProps) {
   const { t } = useTranslation();
-  const L = useMemo(() => ({
+  const effectiveLabels = useMemo(() => ({
     episode: t('detail.labels.episode'),
     director: t('detail.labels.director'),
     producers: t('detail.labels.producers'),
@@ -18,7 +18,7 @@ function DetailsCard({ film, labels, omdb }: DetailsCardProps) {
       <h3 className="text-lg font-semibold mb-2">{t('detail.labels.details', 'Details')}</h3>
       <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
         <div>
-          <dt className="uppercase tracking-widest text-[10px] text-zinc-400">{L.episode}</dt>
+          <dt className="uppercase tracking-widest text-[10px] text-zinc-400">{effectiveLabels.episode}</dt>
           <dd className="text-zinc-100 mt-0.5">{film.episodeID}</dd>
         </div>
         {year && (
@@ -29,13 +29,13 @@ function DetailsCard({ film, labels, omdb }: DetailsCardProps) {
         )}
         {film.director && (
           <div>
-            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">{L.director}</dt>
+            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">{effectiveLabels.director}</dt>
             <dd className="text-zinc-100 mt-0.5">{film.director}</dd>
           </div>
         )}
         {film.producers && (
           <div>
-            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">{L.producers}</dt>
+            <dt className="uppercase tracking-widest text-[10px] text-zinc-400">{effectiveLabels.producers}</dt>
             <dd className="text-zinc-100 mt-0.5">{film.producers.join(', ')}</dd>
           </div>
         )}
