@@ -6,25 +6,25 @@ import { useSlugMap } from "./useSlugMap";
 import { FilmDetails } from "@/types";
 
 const FILM_DETAIL_QUERY = gql`
-    query FilmById($id: ID!) {
-        film(id: $id) {
-            id
-            title
-            episodeID
-            releaseDate
-            openingCrawl
-            director
-            producers
-            characterConnection {
-                characters {
-                    id
-                    name
-                    species { id name }
-                    homeworld { id name }
-                }
-            }
+  query FilmById($id: ID!) {
+    film(id: $id) {
+      id
+      title
+      episodeID
+      releaseDate
+      openingCrawl
+      director
+      producers
+      characterConnection {
+        characters {
+          id
+          name
+          species { id name }
+          homeworld { id name }
         }
+      }
     }
+  }
 `;
 
 const useFilmBySlug = (slug: string | undefined, passedId?: string) => {

@@ -4,18 +4,18 @@ import { useMemo } from "react";
 import { Film, FilmsQueryResult } from "@/types";
 
 const FILMS_QUERY = gql`
-    query Films {
-        allFilms {
-            films {
-                id
-                title
-                episodeID
-                releaseDate
-            }
-            edges { node { id title episodeID releaseDate } }
-            totalCount
-        }
+  query Films {
+    allFilms {
+      films {
+        id
+        title
+        episodeID
+        releaseDate
+      }
+      edges { node { id title episodeID releaseDate } }
+      totalCount
     }
+  }
 `;
 
 const useFilms = () => {

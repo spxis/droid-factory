@@ -22,43 +22,43 @@ import { fetchWookieeCharacterImageUrl } from '@/lib/wookiee';
 // const VISUAL_GUIDE_BASE = `${normalizeVGBase(RAW_VG_BASE)}/characters`;
 
 const CHARACTER_QUERY = gql`
-    query CharacterById($id: ID!) {
-        person(id: $id) {
-            id
-            name
-            birthYear
-            gender
-            height
-            mass
-            eyeColor
-            hairColor
-            skinColor
-            species { id name }
-            homeworld { id name }
-            filmConnection(first: 50) {
-                    films { id title releaseDate }
-                    edges { node { id title releaseDate } }
-                    totalCount
-            }
-        }
+  query CharacterById($id: ID!) {
+    person(id: $id) {
+      id
+      name
+      birthYear
+      gender
+      height
+      mass
+      eyeColor
+      hairColor
+      skinColor
+      species { id name }
+      homeworld { id name }
+      filmConnection(first: 50) {
+        films { id title releaseDate }
+        edges { node { id title releaseDate } }
+        totalCount
+      }
     }
+  }
 `;
 
 // Fallback: some people occasionally have an empty filmConnection; when that happens,
 // we fetch all films with their character lists and filter by this person id.
 const ALL_FILMS_WITH_CHARACTERS = gql`
-    query AllFilmsWithCharacters {
-        allFilms {
-            films {
-                id
-                title
-                releaseDate
-                characterConnection {
-                    characters { id }
-                }
-            }
+  query AllFilmsWithCharacters {
+    allFilms {
+      films {
+        id
+        title
+        releaseDate
+        characterConnection {
+          characters { id }
         }
+      }
     }
+  }
 `;
 
 // Preload an image and resolve true if it loads (not 404), else false
@@ -71,9 +71,6 @@ function checkImage(url: string): Promise<boolean> {
     img.src = url;
   });
 }
-
-// (formatting helpers moved into CharacterCard)
-
 
 const CharacterPage = () => {
   const { id } = useParams();
