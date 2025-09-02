@@ -1,5 +1,3 @@
-// OMDB type declarations moved out of lib for consistency
-
 type OmdbLite = {
     plot?: string;
     metascore?: string;

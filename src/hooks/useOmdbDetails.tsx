@@ -34,7 +34,7 @@ function useOmdbDetails(title?: string, releaseDate?: string) {
         const details = await fetchMovieDetails(title!, year);
         if (cancelled) { return; }
 
-        const payload = {
+        const payload: { poster: string; omdb: OmdbLite } = {
           poster: details?.Poster || '',
           omdb: {
             plot: details?.Plot,

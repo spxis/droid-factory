@@ -2,7 +2,7 @@
 import { gql, useQuery } from '@apollo/client';
 import { createContext, useContext, useMemo } from 'react';
 
-import type { SlugMapProviderProps, Film } from '@/types';
+import type { SlugMapProviderProps, Film, SlugMap } from '@/types';
 
 import { slugifyTitle } from '@/lib/slug';
 
@@ -16,16 +16,6 @@ const SLUG_MAP_QUERY = gql`
     }
   }
 `;
-
-type SlugMap = {
-  // Films
-  slugToId: Record<string, string>;
-  idToSlug: Record<string, string>;
-  // People
-  peopleSlugToId: Record<string, string>;
-  peopleIdToSlug: Record<string, string>;
-  ready: boolean;
-};
 
 const SlugMapContext = createContext<SlugMap>({ slugToId: {}, idToSlug: {}, peopleSlugToId: {}, peopleIdToSlug: {}, ready: false });
 

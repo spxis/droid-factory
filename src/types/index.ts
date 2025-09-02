@@ -12,6 +12,7 @@ import type {
   CharactersCardProps,
   PosterCardProps,
   SlugMapProviderProps,
+  SlugMap,
 } from './ui';
 
 export type {
@@ -40,4 +41,5 @@ export type {
   CharactersCardProps,
   PosterCardProps,
   SlugMapProviderProps,
+  SlugMap,
 };

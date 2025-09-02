@@ -88,4 +88,13 @@ interface SlugMapProviderProps {
   children: React.ReactNode;
 }
 
-export type { BadgeProps, FilmCardProps, CharacterCardProps, OpeningCrawlCardProps, TitleCardProps, DetailsCardProps, OmdbPlotCardProps, CharactersCardProps, PosterCardProps, SlugMapProviderProps };
+// Global slug maps for films and people
+interface SlugMap {
+  slugToId: Record<string, string>;
+  idToSlug: Record<string, string>;
+  peopleSlugToId: Record<string, string>;
+  peopleIdToSlug: Record<string, string>;
+  ready: boolean;
+}
+
+export type { BadgeProps, FilmCardProps, CharacterCardProps, OpeningCrawlCardProps, TitleCardProps, DetailsCardProps, OmdbPlotCardProps, CharactersCardProps, PosterCardProps, SlugMapProviderProps, SlugMap };
