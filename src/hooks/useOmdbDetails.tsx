@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { fetchMovieDetails } from "@/lib/omdb";
 import { OmdbLite } from "@/types";
+import { extractYear } from "@/utils/date";
 
 const cache = new Map<string, { poster: string; omdb: OmdbLite }>();
 
@@ -9,7 +10,7 @@ function useOmdbDetails(title?: string, releaseDate?: string) {
   const [poster, setPoster] = useState<string | null>(null);
   const [omdb, setOmdb] = useState<OmdbLite | null>(null);
 
-  const year = releaseDate?.slice(0, 4);
+  const year = extractYear(releaseDate);
   const key = useMemo(() => (title ? `${title}|${year || ''}` : ''), [title, year]);
 
   useEffect(() => {

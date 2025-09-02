@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FALLBACK_POSTER, POSTER_STORAGE_KEY } from "@/lib/constants";
 import { fetchPosterUrl } from "@/lib/omdb";
 import { Film } from "@/types";
+import { extractYear } from "@/utils/date";
 
 // In-memory cache survives route changes within the SPA
 const postersCache = new Map<string, string>();
@@ -44,7 +45,7 @@ const useFilmPosters = (films: Film[]) => {
         missing.map(async (film: Film) => {
           const url: string | null = await fetchPosterUrl(
             film.title,
-            film.releaseDate?.slice(0, 4)
+            extractYear(film.releaseDate) || ''
           );
           return [film.id, url || FALLBACK_POSTER] as const;
         })

@@ -8,9 +8,12 @@ import OmdbPlotCard from '@/components/OmdbPlotCard';
 import OpeningCrawlCard from '@/components/OpeningCrawlCard';
 import PosterCard from '@/components/PosterCard';
 import TitleCard from '@/components/TitleCard';
+import { useAdjacentFilms } from '@/hooks/useAdjacentFilms';
 import { useFilmBySlug } from '@/hooks/useFilmBySlug';
 import { useOmdbDetails } from '@/hooks/useOmdbDetails';
+import { useSlugMap } from '@/hooks/useSlugMap';
 import { FALLBACK_POSTER } from '@/lib/constants';
+import { extractYear } from '@/utils/date';
 
 const MovieDetailPage = () => {
   const { slug } = useParams();
@@ -20,6 +23,8 @@ const MovieDetailPage = () => {
   const passedId = passed?.id;
 
   const { film, loading, error } = useFilmBySlug(slug, passedId);
+  const { idToSlug } = useSlugMap();
+  const { previous, next } = useAdjacentFilms(film?.id ?? null);
   const { poster, omdb } = useOmdbDetails(film?.title, film?.releaseDate);
 
   // Memoized values must be declared before any early returns
@@ -71,6 +76,36 @@ const MovieDetailPage = () => {
             runtime={omdb?.runtime ?? null}
             labels={{ episode: t('detail.labels.episode') }}
           />
+
+          {/* Prev/Next navigation */}
+          <div className="w-full flex items-center justify-between text-sm text-zinc-300">
+            <div>
+              {previous ? (
+                <Link
+                  to={`/movies/${idToSlug[previous.id]}`}
+                  state={{ id: previous.id }}
+                  className="text-yellow-400 hover:text-yellow-300 select-none"
+                >
+                  &lt; {previous.title} {extractYear(previous.releaseDate) ? (
+                    <span className="text-zinc-400">({extractYear(previous.releaseDate)})</span>
+                  ) : null}
+                </Link>
+              ) : <span />}
+            </div>
+            <div>
+              {next ? (
+                <Link
+                  to={`/movies/${idToSlug[next.id]}`}
+                  state={{ id: next.id }}
+                  className="text-yellow-400 hover:text-yellow-300 select-none"
+                >
+                  {next.title} {extractYear(next.releaseDate) ? (
+                    <span className="text-zinc-400">({extractYear(next.releaseDate)})</span>
+                  ) : null} &gt;
+                </Link>
+              ) : <span />}
+            </div>
+          </div>
 
           {/* Cards grid for Crawl, Details, Plot, Characters */}
           <div className="w-full grid grid-cols-1 gap-4">

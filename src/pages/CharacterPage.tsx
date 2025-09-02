@@ -10,6 +10,7 @@ import { FALLBACK_POSTER, FALLBACK_CHARACTER_IMAGE } from '@/lib/constants';
 import { fetchCharacterImageUrl, fetchCharacterSearchResults, fetchPosterUrl } from '@/lib/omdb';
 import { slugifyTitle } from '@/lib/slug';
 import { fetchWookieeCharacterImageUrl } from '@/lib/wookiee';
+import { extractYear } from '@/utils/date';
 
 // Visual Guide disabled (site no longer reliable). Keeping helpers commented for future swap-in.
 // const RAW_VG_BASE = (import.meta.env.VITE_SW_VISUAL_GUIDE_BASE as string | undefined) || 'https://starwars-visualguide.com/assets/img';
@@ -150,7 +151,7 @@ const CharacterPage = () => {
           const first = sorted[0];
 
           if (first?.title && first?.releaseDate) {
-            const poster = await fetchPosterUrl(first.title, first.releaseDate.slice(0, 4));
+            const poster = await fetchPosterUrl(first.title, extractYear(first.releaseDate) || '');
             chosen = await tryUrl(poster, 'omdb-film-poster');
           }
         }
@@ -234,7 +235,7 @@ const CharacterPage = () => {
     async function run() {
       const entries = await Promise.all(
         missing.map(async (film) => {
-          const year = film.releaseDate ? film.releaseDate.slice(0, 4) : '';
+          const year = extractYear(film.releaseDate) || '';
           const url = await fetchPosterUrl(film.title, year);
           let finalUrl = url || null;
           if (finalUrl) {
@@ -324,7 +325,7 @@ const CharacterPage = () => {
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {films.map((film: FilmRef) => {
                   const poster = filmPosters[film.id] || FALLBACK_POSTER;
-                  const year = film.releaseDate?.slice(0, 4) || '';
+                  const year = extractYear(film.releaseDate) || '';
                   return (
                     <Link
                       key={film.id}

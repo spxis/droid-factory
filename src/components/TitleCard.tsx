@@ -2,8 +2,10 @@ import { memo, useMemo } from 'react';
 
 import type { TitleCardProps } from '@/types';
 
+import { extractYear } from '@/utils/date';
+
 function TitleCard({ title, episodeID, releaseDate, imdbRating, genre, runtime, labels }: TitleCardProps) {
-  const year = useMemo(() => (releaseDate ? releaseDate.slice(0, 4) : null), [releaseDate]);
+  const year = useMemo(() => extractYear(releaseDate), [releaseDate]);
   const effectiveLabels = useMemo(() => ({ episode: 'Episode', ...(labels || {}) } as const), [labels]);
 
   return (

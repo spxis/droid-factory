@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import type { DetailsCardProps } from '@/types';
 
+import { extractYear } from '@/utils/date';
+
 function DetailsCard({ film, labels, omdb }: DetailsCardProps) {
   const { t } = useTranslation();
   const effectiveLabels = useMemo(() => ({
@@ -11,7 +13,7 @@ function DetailsCard({ film, labels, omdb }: DetailsCardProps) {
     producers: t('detail.labels.producers'),
     ...labels,
   } as const), [labels, t]);
-  const year = useMemo(() => (film.releaseDate ? film.releaseDate.slice(0, 4) : null), [film.releaseDate]);
+  const year = useMemo(() => extractYear(film.releaseDate), [film.releaseDate]);
 
   return (
     <div className="rounded-xl ring-1 ring-zinc-800 bg-zinc-900/40 p-4">
