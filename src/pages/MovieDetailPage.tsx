@@ -64,8 +64,9 @@ const MovieDetailPage = () => {
         return () => { cancelled = true; };
     }, [film]);
 
-    if (loading || !ready) { return <p>{LOADING_MESSAGE}</p>; }
+    if (loading) { return <p>{LOADING_MESSAGE}</p>; }
     if (error) { return <p>{ERROR_MESSAGE}</p>; }
+
     if (!film) {
         return (
             <div>
