@@ -103,7 +103,7 @@ const CharacterPage = () => {
       console.log('[CharacterPage] raw data:', data);
       console.log('[CharacterPage] person:', data.person);
       console.log('[CharacterPage] films (films):', data.person?.filmConnection?.films);
-      console.log('[CharacterPage] films (edges):', data.person?.filmConnection?.edges?.map?.((e) => e?.node));
+      console.log('[CharacterPage] films (edges):', data.person?.filmConnection?.edges?.map?.((edge) => edge?.node));
     }
   }, [data]);
 
@@ -141,12 +141,12 @@ const CharacterPage = () => {
       if (!chosen) {
         const filmsFromFilms = (data?.person?.filmConnection?.films ?? []) as Array<{ id: string; title: string; releaseDate?: string }>;
         const filmsFromEdges = ((data?.person?.filmConnection?.edges ?? []) as Array<{ node?: { id: string; title: string; releaseDate?: string } }>)
-          .map((e) => e?.node)
+          .map((edge) => edge?.node)
           .filter(Boolean) as Array<{ id: string; title: string; releaseDate?: string }>;
         const films = filmsFromFilms.length ? filmsFromFilms : filmsFromEdges;
 
         if (films.length) {
-          const sorted = [...films].sort((a, b) => (a.releaseDate || '').localeCompare(b.releaseDate || ''));
+          const sorted = [...films].sort((left, right) => (left.releaseDate || '').localeCompare(right.releaseDate || ''));
           const first = sorted[0];
 
           if (first?.title && first?.releaseDate) {
@@ -185,12 +185,12 @@ const CharacterPage = () => {
 
       // Filter out posters that 404 by preloading them
       const checks = await Promise.all(
-        items.map((it) => (it.Poster ? checkImage(it.Poster) : Promise.resolve(false)))
+        items.map((item) => (item.Poster ? checkImage(item.Poster) : Promise.resolve(false)))
       );
 
       if (cancelled) { return; }
 
-      const filtered = items.filter((_, i) => checks[i]);
+      const filtered = items.filter((__unused, index) => checks[index]);
       setOmdbResults(filtered);
     }
     run();
@@ -201,7 +201,7 @@ const CharacterPage = () => {
   const person: Person | undefined = data?.person;
   const filmsFromFilms = (person?.filmConnection?.films ?? []) as FilmRef[];
   const filmsFromEdges = ((person?.filmConnection?.edges ?? []) as Array<{ node?: FilmRef }>)
-    .map((e) => e?.node as FilmRef | undefined)
+    .map((edge) => edge?.node as FilmRef | undefined)
     .filter(Boolean) as FilmRef[];
   let filmsMerged: FilmRef[] = filmsFromFilms.length ? filmsFromFilms : filmsFromEdges;
 
@@ -209,8 +209,8 @@ const CharacterPage = () => {
   if (filmsMerged.length === 0 && allFilmsData?.allFilms?.films?.length && person?.id) {
     const personId = person.id as string;
     const viaAllFilms = allFilmsData.allFilms.films
-      .filter((f) => (f.characterConnection?.characters ?? []).some((ch) => ch?.id === personId))
-      .map((f) => ({ id: f.id, title: f.title, releaseDate: f.releaseDate }));
+      .filter((film) => (film.characterConnection?.characters ?? []).some((ch) => ch?.id === personId))
+      .map((film) => ({ id: film.id, title: film.title, releaseDate: film.releaseDate }));
 
     if (viaAllFilms.length) {
       console.log('[CharacterPage] using fallback via allFilms; matched', viaAllFilms.length, 'films');
@@ -220,31 +220,31 @@ const CharacterPage = () => {
 
   // Dedupe by id and sort by release year asc
   const filmMap = new Map<string, FilmRef>();
-  for (const f of filmsMerged) { filmMap.set(f.id, f); }
-  const films = Array.from(filmMap.values()).sort((a, b) => (a.releaseDate || '').localeCompare(b.releaseDate || ''));
+  for (const film of filmsMerged) { filmMap.set(film.id, film); }
+  const films = Array.from(filmMap.values()).sort((left, right) => (left.releaseDate || '').localeCompare(right.releaseDate || ''));
 
   // Fetch OMDB posters for each film shown
   const [filmPosters, setFilmPosters] = useState<Record<string, string>>({});
   useEffect(() => {
     let cancelled = false;
-    const missing = films.filter((f) => !filmPosters[f.id]);
+    const missing = films.filter((film) => !filmPosters[film.id]);
 
     if (missing.length === 0) { return () => { cancelled = true; }; }
 
     async function run() {
       const entries = await Promise.all(
-        missing.map(async (f) => {
-          const year = f.releaseDate ? f.releaseDate.slice(0, 4) : '';
-          const url = await fetchPosterUrl(f.title, year);
+        missing.map(async (film) => {
+          const year = film.releaseDate ? film.releaseDate.slice(0, 4) : '';
+          const url = await fetchPosterUrl(film.title, year);
           let finalUrl = url || null;
           if (finalUrl) {
             const ok = await checkImage(finalUrl);
             if (!ok) {
-              console.log('[CharacterPage] film poster 404, falling back', { title: f.title, year, url: finalUrl });
+              console.log('[CharacterPage] film poster 404, falling back', { title: film.title, year, url: finalUrl });
               finalUrl = null;
             }
           }
-          return [f.id, finalUrl || FALLBACK_POSTER] as const;
+          return [film.id, finalUrl || FALLBACK_POSTER] as const;
         })
       );
       if (cancelled) { return; }
@@ -322,22 +322,22 @@ const CharacterPage = () => {
               <div className="text-sm text-zinc-400">{t('character.noFilms', 'No films found.')}</div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {films.map((f: FilmRef) => {
-                  const poster = filmPosters[f.id] || FALLBACK_POSTER;
-                  const year = f.releaseDate?.slice(0, 4) || '';
+                {films.map((film: FilmRef) => {
+                  const poster = filmPosters[film.id] || FALLBACK_POSTER;
+                  const year = film.releaseDate?.slice(0, 4) || '';
                   return (
                     <Link
-                      key={f.id}
-                      to={`/movies/${slugifyTitle(f.title)}`}
-                      state={{ id: f.id }}
+                      key={film.id}
+                      to={`/movies/${slugifyTitle(film.title)}`}
+                      state={{ id: film.id }}
                       className="group block"
-                      title={`${f.title}${year ? ` (${year})` : ''}`}
+                      title={`${film.title}${year ? ` (${year})` : ''}`}
                     >
                       <div className="aspect-[2/3] overflow-hidden rounded-lg ring-1 ring-zinc-800 bg-zinc-900/40">
-                        <img src={poster} alt={f.title} referrerPolicy="no-referrer" className="h-full w-full object-cover group-hover:opacity-90 transition" />
+                        <img src={poster} alt={film.title} referrerPolicy="no-referrer" className="h-full w-full object-cover group-hover:opacity-90 transition" />
                       </div>
                       <div className="mt-1 text-xs text-zinc-200 line-clamp-2">
-                        {f.title} {year ? <span className="text-zinc-400">({year})</span> : null}
+                        {film.title} {year ? <span className="text-zinc-400">({year})</span> : null}
                       </div>
                     </Link>
                   );

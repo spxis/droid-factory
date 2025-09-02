@@ -20,16 +20,16 @@ const useFilmPosters = (films: Film[]) => {
     }
 
     const initial: Record<string, string> = {};
-    for (const f of films) {
-      const mem = postersCache.get(f.id);
-      const persisted = stored[f.id];
-      if (mem) { initial[f.id] = mem; }
-      else if (persisted) { initial[f.id] = persisted; postersCache.set(f.id, persisted); }
+    for (const film of films) {
+      const mem = postersCache.get(film.id);
+      const persisted = stored[film.id];
+      if (mem) { initial[film.id] = mem; }
+      else if (persisted) { initial[film.id] = persisted; postersCache.set(film.id, persisted); }
     }
     return initial;
   });
 
-  const filmKeys = useMemo(() => films.map(f => f.id).join('|'), [films]);
+  const filmKeys = useMemo(() => films.map((film) => film.id).join('|'), [films]);
 
   useEffect(() => {
     let cancelled = false;

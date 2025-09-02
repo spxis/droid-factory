@@ -15,13 +15,13 @@ async function fetchPosterUrl(title: string, year: string): Promise<string | nul
   const url = `${OMDB_SEARCH_URL}?apikey=${OMDB_API_KEY}&t=${encodeURIComponent(title)}&y=${year}`;
 
   try {
-    const res = await fetch(url);
+    const response = await fetch(url);
 
-    if (!res.ok) {
+    if (!response.ok) {
       return null;
     }
 
-    const data = await res.json();
+    const data = await response.json();
 
     if (data.Poster && data.Poster !== 'N/A') {
       return data.Poster;
@@ -42,19 +42,19 @@ async function fetchCharacterImageUrl(name: string): Promise<string | null> {
 
   const queries = [name, `Star Wars ${name}`];
 
-  for (const q of queries) {
-    const url = `${OMDB_SEARCH_URL}?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(q)}`;
+  for (const query of queries) {
+    const url = `${OMDB_SEARCH_URL}?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(query)}`;
 
     try {
-      const res = await fetch(url);
+      const response = await fetch(url);
 
-      if (!res.ok) {
+      if (!response.ok) {
         continue;
       }
         
-      const data: { Search?: Array<{ Poster?: string }>; [k: string]: unknown } = await res.json();
+      const data: { Search?: Array<{ Poster?: string }>; [k: string]: unknown } = await response.json();
       const items = Array.isArray(data?.Search) ? data.Search : [];
-      const withPoster = items.find((it) => it?.Poster && it.Poster !== 'N/A');
+      const withPoster = items.find((item) => item?.Poster && item.Poster !== 'N/A');
 
       if (withPoster) {
         return withPoster.Poster as string;
@@ -76,24 +76,24 @@ async function fetchCharacterSearchResults(name: string): Promise<OMDBSearchItem
   const seen = new Set<string>();
   const results: OMDBSearchItem[] = [];
 
-  for (const q of queries) {
-    const url = `${OMDB_SEARCH_URL}?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(q)}`;
+  for (const query of queries) {
+    const url = `${OMDB_SEARCH_URL}?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(query)}`;
 
     try {
-      const res = await fetch(url);
+      const response = await fetch(url);
 
-      if (!res.ok) {continue;}
+      if (!response.ok) {continue;}
 
-      const data: { Search?: OMDBSearchItem[] } = await res.json();
+      const data: { Search?: OMDBSearchItem[] } = await response.json();
       const items = Array.isArray(data?.Search) ? data.Search : [];
 
-      for (const it of items) {
-        if (!it || !it.imdbID) {continue;}
-        if (!it.Poster || it.Poster === 'N/A') {continue;}
-        if (seen.has(it.imdbID)) {continue;}
+      for (const item of items) {
+        if (!item || !item.imdbID) {continue;}
+        if (!item.Poster || item.Poster === 'N/A') {continue;}
+        if (seen.has(item.imdbID)) {continue;}
 
-        seen.add(it.imdbID);
-        results.push(it);
+        seen.add(item.imdbID);
+        results.push(item);
       }
     } catch {
       // ignore this query
@@ -110,11 +110,11 @@ async function fetchMovieDetails(title: string, year?: string): Promise<OMDBMovi
   }
   const url = `${OMDB_SEARCH_URL}?apikey=${OMDB_API_KEY}&t=${encodeURIComponent(title)}${year ? `&y=${year}` : ''}`;
   try {
-    const res = await fetch(url);
+    const response = await fetch(url);
     
-    if (!res.ok) {return null;}
+    if (!response.ok) {return null;}
 
-    const data = await res.json();
+    const data = await response.json();
 
     if (data?.Response === 'True' && data?.imdbID) {
       return data as OMDBMovieDetails;

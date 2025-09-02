@@ -17,7 +17,13 @@ const SLUG_MAP_QUERY = gql`
   }
 `;
 
-const SlugMapContext = createContext<SlugMap>({ slugToId: {}, idToSlug: {}, peopleSlugToId: {}, peopleIdToSlug: {}, ready: false });
+const SlugMapContext = createContext<SlugMap>({
+  slugToId: {},
+  idToSlug: {},
+  peopleSlugToId: {},
+  peopleIdToSlug: {},
+  ready: false
+});
 
 const SlugMapProvider: React.FC<SlugMapProviderProps> = ({ children }) => {
   const { data, loading } = useQuery(SLUG_MAP_QUERY);
@@ -30,16 +36,16 @@ const SlugMapProvider: React.FC<SlugMapProviderProps> = ({ children }) => {
     const peopleSlugToId: Record<string, string> = {};
     const peopleIdToSlug: Record<string, string> = {};
 
-    for (const f of films) {
-      const slug = slugifyTitle(f.title);
-      slugToId[slug] = f.id;
-      idToSlug[f.id] = slug;
+    for (const film of films) {
+      const slug = slugifyTitle(film.title);
+      slugToId[slug] = film.id;
+      idToSlug[film.id] = slug;
     }
 
-    for (const p of people) {
-      const slug = slugifyTitle(p.name);
-      peopleSlugToId[slug] = p.id;
-      peopleIdToSlug[p.id] = slug;
+    for (const person of people) {
+      const slug = slugifyTitle(person.name);
+      peopleSlugToId[slug] = person.id;
+      peopleIdToSlug[person.id] = slug;
     }
 
     return { slugToId, idToSlug, peopleSlugToId, peopleIdToSlug, ready: !loading };

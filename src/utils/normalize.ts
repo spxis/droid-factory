@@ -5,7 +5,7 @@ function normalizeOpeningCrawl(raw?: string | null): string[] {
   const blocks = normalized.split(/\n{2,}/);
 
   return blocks
-    .map((b) => b.replace(/\n+/g, ' ').replace(/\s{2,}/g, ' ').trim())
+    .map((block) => block.replace(/\n+/g, ' ').replace(/\s{2,}/g, ' ').trim())
     .filter(Boolean);
 }
 

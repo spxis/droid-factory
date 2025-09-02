@@ -35,9 +35,9 @@ async function fetchJson(url: string): Promise<WikiQueryResponse | null> {
 function pickImageFromPages(pages: Record<string, WikiImagePage> | undefined): string | null {
   if (!pages) { return null; }
   for (const key of Object.keys(pages)) {
-    const p = pages[key];
-    const original = p?.original?.source as string | undefined;
-    const thumb = p?.thumbnail?.source as string | undefined;
+    const page = pages[key];
+    const original = page?.original?.source as string | undefined;
+    const thumb = page?.thumbnail?.source as string | undefined;
     if (original) { return original; }
     if (thumb) { return thumb; }
   }

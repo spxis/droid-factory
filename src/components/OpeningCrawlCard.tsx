@@ -14,8 +14,8 @@ function OpeningCrawlCard({ crawl }: OpeningCrawlCardProps) {
     <div className="rounded-xl ring-1 ring-zinc-800 bg-zinc-900/40 p-4">
       <h3 className="text-lg font-semibold mb-2">{t('detail.labels.openingCrawl')}</h3>
       <div className="max-w-prose text-left space-y-4 text-base md:text-lg leading-7 text-zinc-200/95">
-        {paragraphs.map((p, i) => (
-          <p key={i}>{p}</p>
+        {paragraphs.map((paragraph, index) => (
+          <p key={index}>{paragraph}</p>
         ))}
       </div>
     </div>

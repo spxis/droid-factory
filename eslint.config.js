@@ -46,6 +46,12 @@ export default tseslint.config(
       'react/react-in-jsx-scope': 'off',
   curly: ['error', 'all'],
   'import/first': 'error',
+      // Disallow single-character identifiers in our codebase (except i18n's `t`).
+      // Library code in node_modules is not linted.
+      'id-length': [
+        'error',
+        { min: 2, properties: 'never', exceptions: ['t'] },
+      ],
       'import/order': [
         'warn',
         {

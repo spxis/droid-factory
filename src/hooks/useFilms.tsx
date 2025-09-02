@@ -23,11 +23,11 @@ const useFilms = () => {
   const films: Film[] = useMemo(() => {
     const byList = data?.allFilms?.films ?? [];
     const byEdges = (data?.allFilms?.edges ?? [])
-      .map((e: { node?: Film }) => e?.node)
+      .map((edge: { node?: Film }) => edge?.node)
       .filter(Boolean) as Film[];
     const base = byList.length ? byList : byEdges;
 
-    return [...base].sort((a, b) => (a.releaseDate || '').localeCompare(b.releaseDate || '')); // ascending by year
+    return [...base].sort((left, right) => (left.releaseDate || '').localeCompare(right.releaseDate || '')); // ascending by year
   }, [data]);
 
   return {

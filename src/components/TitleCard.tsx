@@ -4,14 +4,14 @@ import type { TitleCardProps } from '@/types';
 
 function TitleCard({ title, episodeID, releaseDate, imdbRating, genre, runtime, labels }: TitleCardProps) {
   const year = useMemo(() => (releaseDate ? releaseDate.slice(0, 4) : null), [releaseDate]);
-  const L = useMemo(() => ({ episode: 'Episode', ...(labels || {}) } as const), [labels]);
+  const effectiveLabels = useMemo(() => ({ episode: 'Episode', ...(labels || {}) } as const), [labels]);
 
   return (
     <div className="rounded-xl ring-1 ring-zinc-800 bg-zinc-900/40 p-4 text-center">
       <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">{title}</h1>
 
       <div className="text-base md:text-lg text-zinc-300">
-        {episodeID != null && <span>{L.episode} {episodeID}</span>}
+        {episodeID != null && <span>{effectiveLabels.episode} {episodeID}</span>}
         {year && <span>{episodeID != null ? ' • ' : ''}{year}</span>}
         {imdbRating && <span> • IMDb {imdbRating}</span>}
       </div>

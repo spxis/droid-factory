@@ -1,4 +1,7 @@
 {
+  "common": {
+    "unknown": "Unknown"
+  },
   "app": {
     "title": "Star Wars Movies"
   },
