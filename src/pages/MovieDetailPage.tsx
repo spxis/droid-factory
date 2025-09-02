@@ -10,7 +10,7 @@ import TitleCard from '@/components/TitleCard';
 import { useFilmBySlug } from '@/hooks/useFilmBySlug';
 import { useOmdbDetails } from '@/hooks/useOmdbDetails';
 
-const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
+const FALLBACK_POSTER = 'https://placehold.co/400x600/0b0b0b/9ca3af?text=No+Poster';
 
 const LOADING_MESSAGE = 'Loading...';
 const ERROR_MESSAGE = 'Error loading film';
@@ -25,7 +25,8 @@ const LABEL_PRODUCERS = 'Producers';
 const MovieDetailPage = () => {
   const { slug } = useParams();
   const location = useLocation();
-  const passedId = (location.state as { id?: string } | null)?.id;
+  const passed = (location.state as { id?: string; posterUrl?: string } | null) || null;
+  const passedId = passed?.id;
 
   const { film, loading, error } = useFilmBySlug(slug, passedId);
   const { poster, omdb } = useOmdbDetails(film?.title, film?.releaseDate);
@@ -60,7 +61,7 @@ const MovieDetailPage = () => {
       <section className="mt-4 rounded-2xl ring-1 ring-yellow-900/25 bg-gradient-to-b from-zinc-900/70 to-black/60 shadow-xl shadow-black/30 p-5 md:p-8">
         {/* Stack content vertically and center key elements */}
         <div className="flex flex-col items-center gap-5 md:gap-6">
-          <PosterCard src={poster} alt={film.title} fallbackSrc={FALLBACK_POSTER} />
+          <PosterCard src={passed?.posterUrl || poster} alt={film.title} fallbackSrc={FALLBACK_POSTER} />
           <TitleCard
             title={film.title}
             episodeID={film.episodeID ?? null}

@@ -13,7 +13,7 @@ const FilmCard: React.FC<FilmCardProps> = ({ film, posterUrl }) => {
   return (
     <Link
       to={`/movies/${slug}`}
-      state={{ id: film.id }}
+      state={{ id: film.id, posterUrl }}
       className="block group transition-transform duration-200 hover:scale-105 no-underline max-w-[300px] w-full mx-auto"
     >
       <div className="w-full overflow-hidden rounded-lg ring-1 ring-zinc-800 bg-zinc-900/40">
