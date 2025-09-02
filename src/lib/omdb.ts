@@ -2,7 +2,7 @@
 // Utility to fetch a movie poster from OMDB by title and year
 
 // Full OMDB search results for a character name (deduped, with posters only)
-import type { OMDBSearchItem, OMDBMovieDetails } from '../types';
+import type { OMDBSearchItem, OMDBMovieDetails } from '@/types';
 
 const OMDB_API_KEY = import.meta.env.VITE_OMDB_API_KEY || '';
 const OMDB_SEARCH_URL = import.meta.env.VITE_OMDB_API_URL || 'https://www.omdbapi.com/';

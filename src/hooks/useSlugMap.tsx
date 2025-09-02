@@ -2,9 +2,9 @@
 import { gql, useQuery } from '@apollo/client';
 import { createContext, useContext, useMemo } from 'react';
 
-import { slugifyTitle } from '../lib/slug';
+import type { Film } from '@/types';
 
-import type { Film } from '../types';
+import { slugifyTitle } from '@/lib/slug';
 
 const SLUG_MAP_QUERY = gql`
   query SlugMapData {

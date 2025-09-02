@@ -1,7 +1,10 @@
 import { gql, useQuery } from "@apollo/client";
-import { FilmDetails } from "../types";
-import { useSlugMap } from "./useSlugMap";
 import { useMemo } from "react";
+
+import { useSlugMap } from "./useSlugMap";
+
+import { FilmDetails } from "@/types";
+
 
 const FILM_DETAIL_QUERY = gql`
     query FilmById($id: ID!) {

@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 
-import { slugifyTitle } from '../lib/slug';
+import type { Film } from '@/types';
 
-import type { Film } from '../types';
+import { slugifyTitle } from '@/lib/slug';
+
 
 const LABEL_EPISODE = 'Episode';
 

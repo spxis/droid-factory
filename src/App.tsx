@@ -1,16 +1,16 @@
 import { ApolloProvider } from '@apollo/client';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
-import client from './lib/apollo';
-import { SlugMapProvider } from './hooks/useSlugMap';
-
-const CharacterPage = lazy(() => import('./pages/CharacterPage'));
-const MovieDetailPage = lazy(() => import('./pages/MovieDetailPage'));
-const MoviesPage = lazy(() => import('./pages/MoviesPage'));
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+import { SlugMapProvider } from '@/hooks/useSlugMap';
+import client from '@/lib/apollo';
 
 import './App.css';
+
+const CharacterPage = lazy(() => import('@/pages/CharacterPage'));
+const MovieDetailPage = lazy(() => import('@/pages/MovieDetailPage'));
+const MoviesPage = lazy(() => import('@/pages/MoviesPage'));
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 
 const PROJECT_TITLE = import.meta.env.VITE_PROJECT_TITLE || 'Star Wars Movies';
 

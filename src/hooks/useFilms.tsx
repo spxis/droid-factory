@@ -1,6 +1,7 @@
-import { useMemo } from "react";
-import { Film, FilmsQueryResult } from "../types/film";
 import { gql, useQuery } from '@apollo/client';
+import { useMemo } from "react";
+
+import { Film, FilmsQueryResult } from "@/types";
 
 const FILMS_QUERY = gql`
     query Films {

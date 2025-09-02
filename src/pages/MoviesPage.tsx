@@ -1,10 +1,11 @@
 // Reusable FilmCard component
-import type { Film } from '../types';
 
-import FilmCard from '../components/FilmCard';
-import { useFilmPosters } from '../hooks/useFilmPosters';
+import type { Film } from '@/types';
 
-import { useFilms } from '../hooks/useFilms';
+import FilmCard from '@/components/FilmCard';
+import { useFilmPosters } from '@/hooks/useFilmPosters';
+import { useFilms } from '@/hooks/useFilms';
+
 
 const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
 const LOADING_MESSAGE = 'Loading...';

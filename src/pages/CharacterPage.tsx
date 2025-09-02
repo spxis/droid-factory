@@ -2,12 +2,13 @@ import { gql, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import CharacterCard from '../components/CharacterCard';
-import { fetchCharacterImageUrl, fetchCharacterSearchResults, fetchPosterUrl } from '../lib/omdb';
-import { slugifyTitle } from '../lib/slug';
-import { fetchWookieeCharacterImageUrl } from '../lib/wookiee';
+import type { OMDBSearchItem, FilmRef, Person } from '@/types';
 
-import type { OMDBSearchItem, FilmRef, Person } from '../types';
+import CharacterCard from '@/components/CharacterCard';
+import { fetchCharacterImageUrl, fetchCharacterSearchResults, fetchPosterUrl } from '@/lib/omdb';
+import { slugifyTitle } from '@/lib/slug';
+import { fetchWookieeCharacterImageUrl } from '@/lib/wookiee';
+
 
 const LOADING_MESSAGE = 'Loading...';
 const ERROR_MESSAGE = 'Error loading character';

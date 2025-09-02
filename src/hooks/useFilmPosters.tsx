@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Film } from "../types/film";
-import { fetchPosterUrl } from "../lib/omdb";
+
+import { fetchPosterUrl } from "@/lib/omdb";
+import { Film } from "@/types";
 
 const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
 
