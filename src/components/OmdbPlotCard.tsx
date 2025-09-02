@@ -2,7 +2,7 @@ import { memo } from 'react';
 import type { OmdbPlotCardProps } from '@/types';
 
 function OmdbPlotCard({ plot, imdbID }: OmdbPlotCardProps) {
-    if (!plot) {return null;}
+    if (!plot) { return null; }
 
     return (
         <div className="rounded-xl ring-1 ring-zinc-800 bg-zinc-900/40 p-4">
