@@ -1,4 +1,4 @@
-import type { Film, FilmRef, FilmsQueryResult } from './film';
+import type { Film, FilmRef, FilmsQueryResult, PosterFilmInput } from './film';
 import type { OMDBSearchItem, OMDBMovieDetails, OmdbLite } from './omdb';
 import type { Planet, Species, Character, Person, FilmDetails } from './swapi';
 import type {
@@ -20,6 +20,7 @@ export type {
   Film,
   FilmRef,
   FilmsQueryResult,
+  PosterFilmInput,
   // swapi
   Planet,
   Species,

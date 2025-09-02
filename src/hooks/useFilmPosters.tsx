@@ -1,18 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
 
+import type { PosterFilmInput } from "@/types";
+
 import { FALLBACK_POSTER, POSTER_STORAGE_KEY } from "@/lib/constants";
 import { fetchPosterUrl } from "@/lib/omdb";
-import { Film } from "@/types";
 import { extractYear } from "@/utils/date";
 
 // In-memory cache survives route changes within the SPA
 const postersCache = new Map<string, string>();
 const STORAGE_KEY = POSTER_STORAGE_KEY;
 
-const useFilmPosters = (films: Film[]) => {
-  const [posters, setPosters] = useState<Record<string, string>>(() => {
+type PostersMap = Record<string, string>;
+
+const useFilmPosters = (films: PosterFilmInput[]): PostersMap => {
+  const [posters, setPosters] = useState<PostersMap>(() => {
     // Seed from memory cache and localStorage (if present)
     let stored: Record<string, string> = {};
+
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       stored = raw ? (JSON.parse(raw) as Record<string, string>) : {};
@@ -20,10 +24,11 @@ const useFilmPosters = (films: Film[]) => {
       stored = {};
     }
 
-    const initial: Record<string, string> = {};
+    const initial: PostersMap = {};
     for (const film of films) {
       const mem = postersCache.get(film.id);
       const persisted = stored[film.id];
+
       if (mem) { initial[film.id] = mem; }
       else if (persisted) { initial[film.id] = persisted; postersCache.set(film.id, persisted); }
     }
@@ -35,14 +40,14 @@ const useFilmPosters = (films: Film[]) => {
   useEffect(() => {
     let cancelled = false;
 
-    const missing = films.filter((film: Film) => !posters[film.id]);
+    const missing = films.filter((film: PosterFilmInput) => !posters[film.id]);
     if (missing.length === 0) {
       return () => { cancelled = true; };
     }
 
     async function fetchMissing(): Promise<void> {
       const entries = await Promise.all(
-        missing.map(async (film: Film) => {
+        missing.map(async (film: PosterFilmInput) => {
           const url: string | null = await fetchPosterUrl(
             film.title,
             extractYear(film.releaseDate) || ''
@@ -54,11 +59,13 @@ const useFilmPosters = (films: Film[]) => {
       if (cancelled) { return; }
 
       setPosters((prev) => {
-        const next = { ...prev } as Record<string, string>;
+        const next: PostersMap = { ...prev };
+
         for (const [id, url] of entries) {
           next[id] = url;
           postersCache.set(id, url);
         }
+
         // Persist a compact map for future reloads
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(next));

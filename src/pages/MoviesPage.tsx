@@ -2,7 +2,6 @@
 
 import { useTranslation } from 'react-i18next';
 
-import type { Film } from '@/types';
 
 import FilmCard from '@/components/FilmCard';
 import { useFilmPosters } from '@/hooks/useFilmPosters';
@@ -12,7 +11,7 @@ import { FALLBACK_POSTER } from '@/lib/constants';
 const MoviesPage = () => {
   const { t } = useTranslation();
   const { films, totalCount, loading, error } = useFilms();
-  const posters = useFilmPosters(films as Film[]);
+  const posters = useFilmPosters(films);
 
   if (loading) { return <p>{t('movies.loading')}</p>; }
   if (error) { return <p>{t('movies.error')}</p>; }

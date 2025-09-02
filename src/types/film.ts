@@ -26,4 +26,7 @@ interface FilmsQueryResult {
   };
 }
 
-export type { Film, FilmRef, FilmsQueryResult };
+// Minimal input shape for poster lookups
+type PosterFilmInput = Pick<Film, 'id' | 'title' | 'releaseDate'>;
+
+export type { Film, FilmRef, FilmsQueryResult, PosterFilmInput };
