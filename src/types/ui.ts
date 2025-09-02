@@ -56,4 +56,36 @@ interface FilmCardProps {
   posterUrl: string;
 }
 
-export type { BadgeProps, FilmCardProps, OpeningCrawlCardProps, TitleCardProps, DetailsCardProps, OmdbPlotCardProps, CharactersCardProps, PosterCardProps };
+interface CharacterCardProps {
+  name: string;
+  imageUrl: string | null;
+  labels: {
+    species: string;
+    homeworld: string;
+    birthYear: string;
+    gender: string;
+    height: string;
+    mass: string;
+    eyeColor: string;
+    hairColor: string;
+    skinColor: string;
+  };
+  speciesName?: string | null;
+  homeworldName?: string | null;
+  vitals: {
+    birthYear?: string | null;
+    gender?: string | null;
+    height?: string | null;
+    mass?: string | null;
+    eyeColor?: string | null;
+    hairColor?: string | null;
+    skinColor?: string | null;
+  };
+  fallbackImage: string;
+}
+
+interface SlugMapProviderProps {
+  children: React.ReactNode;
+}
+
+export type { BadgeProps, FilmCardProps, CharacterCardProps, OpeningCrawlCardProps, TitleCardProps, DetailsCardProps, OmdbPlotCardProps, CharactersCardProps, PosterCardProps, SlugMapProviderProps };

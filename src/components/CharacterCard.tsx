@@ -1,4 +1,4 @@
-import { BadgeProps } from '@/types';
+import type { BadgeProps, CharacterCardProps } from '@/types';
 import React from 'react';
 
 const Badge: React.FC<BadgeProps> = ({ label, value }) => (
@@ -15,34 +15,6 @@ function fmt(val?: string | null, unit?: string): string {
     if (isUnknown(val)) { return 'Unknown'; }
 
     return unit ? `${val} ${unit}` : String(val);
-}
-
-export interface CharacterCardProps {
-    name: string;
-    imageUrl: string | null;
-    labels: {
-        species: string;
-        homeworld: string;
-        birthYear: string;
-        gender: string;
-        height: string;
-        mass: string;
-        eyeColor: string;
-        hairColor: string;
-        skinColor: string;
-    };
-    speciesName?: string | null;
-    homeworldName?: string | null;
-    vitals: {
-        birthYear?: string | null;
-        gender?: string | null;
-        height?: string | null;
-        mass?: string | null;
-        eyeColor?: string | null;
-        hairColor?: string | null;
-        skinColor?: string | null;
-    };
-    fallbackImage: string;
 }
 
 const CharacterCard: React.FC<CharacterCardProps> = ({

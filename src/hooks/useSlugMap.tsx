@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { gql, useQuery } from '@apollo/client';
 import { createContext, useContext, useMemo } from 'react';
+import type { SlugMapProviderProps } from '@/types';
 
 import type { Film } from '@/types';
 
@@ -29,7 +30,7 @@ type SlugMap = {
 
 const SlugMapContext = createContext<SlugMap>({ slugToId: {}, idToSlug: {}, peopleSlugToId: {}, peopleIdToSlug: {}, ready: false });
 
-const SlugMapProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const SlugMapProvider: React.FC<SlugMapProviderProps> = ({ children }) => {
   const { data, loading } = useQuery(SLUG_MAP_QUERY);
 
   const value: SlugMap = useMemo(() => {
