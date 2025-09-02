@@ -1,9 +1,5 @@
+import { BadgeProps } from '@/types';
 import React from 'react';
-
-interface BadgeProps {
-    label: string;
-    value?: string | null;
-}
 
 const Badge: React.FC<BadgeProps> = ({ label, value }) => (
     <span className="inline-flex items-center rounded-md ring-1 ring-zinc-800 bg-zinc-900/30 px-2 py-1">

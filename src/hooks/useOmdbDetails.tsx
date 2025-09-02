@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { fetchMovieDetails } from "@/lib/omdb";
-import { OmdbLite } from "@/types/omdb";
+import { OmdbLite } from "@/types";
 
 const cache = new Map<string, { poster: string; omdb: OmdbLite }>();
 

@@ -2,11 +2,11 @@
 import type { Film } from './film';
 import type { FilmDetails, Character } from './swapi';
 
-export interface OpeningCrawlCardProps {
+interface OpeningCrawlCardProps {
   crawl?: string | null;
 }
 
-export interface TitleCardProps {
+interface TitleCardProps {
   title: string;
   episodeID?: number | null;
   releaseDate?: string | null;
@@ -16,7 +16,7 @@ export interface TitleCardProps {
   labels?: { episode?: string };
 }
 
-export interface DetailsCardProps {
+interface DetailsCardProps {
   film: Film | FilmDetails;
   labels?: {
     episode?: string;
@@ -31,17 +31,29 @@ export interface DetailsCardProps {
   } | null;
 }
 
-export interface OmdbPlotCardProps {
+interface OmdbPlotCardProps {
   plot?: string | null;
   imdbID?: string | null;
 }
 
-export interface CharactersCardProps {
+interface CharactersCardProps {
   characters: Character[] | undefined | null;
 }
 
-export interface PosterCardProps {
+interface PosterCardProps {
   src?: string | null;
   alt: string;
   fallbackSrc: string;
 }
+
+interface BadgeProps {
+    label: string;
+    value?: string | null;
+}
+
+interface FilmCardProps {
+  film: Film;
+  posterUrl: string;
+}
+
+export type { BadgeProps, FilmCardProps, OpeningCrawlCardProps, TitleCardProps, DetailsCardProps, OmdbPlotCardProps, CharactersCardProps, PosterCardProps };

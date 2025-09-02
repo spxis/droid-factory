@@ -1,16 +1,11 @@
 import { Link } from 'react-router-dom';
 import { memo, useMemo } from 'react';
 
-import type { Film } from '@/types';
+import type { FilmCardProps } from '@/types';
 
 import { slugifyTitle } from '@/lib/slug';
 
 const LABEL_EPISODE = 'Episode';
-
-interface FilmCardProps {
-    film: Film;
-    posterUrl: string;
-}
 
 const FilmCard: React.FC<FilmCardProps> = ({ film, posterUrl }) => {
     const slug = useMemo(() => slugifyTitle(film.title), [film.title]);

@@ -3,7 +3,6 @@ import type { OpeningCrawlCardProps } from '@/types';
 
 import { normalizeOpeningCrawl } from '@/utils/normalize';
 
-
 function OpeningCrawlCard({ crawl }: OpeningCrawlCardProps) {
     const paragraphs = useMemo(() => normalizeOpeningCrawl(crawl ?? undefined), [crawl]);
     if (!paragraphs.length) { return null; }
