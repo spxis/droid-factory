@@ -1,18 +1,18 @@
 import { Link } from 'react-router-dom';
+import { memo, useMemo } from 'react';
 
 import type { CharactersCardProps } from '@/types';
 
 function CharactersCard({ characters }: CharactersCardProps) {
     const list = characters ?? [];
+    const sorted = useMemo(() => [...list].sort((a, b) => a.name.localeCompare(b.name)), [list]);
     if (list.length === 0) { return null; }
 
     return (
         <div className="rounded-xl ring-1 ring-zinc-800 bg-zinc-900/40 p-4">
             <h3 className="text-lg font-semibold mb-3">Characters</h3>
             <div className="flex flex-wrap gap-2">
-                {[...list]
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((c) => (
+                {sorted.map((c) => (
                         <Link
                             key={c.id}
                             to={`/characters/${c.id}`}
@@ -28,4 +28,4 @@ function CharactersCard({ characters }: CharactersCardProps) {
 }
 
 export { CharactersCard };
-export default CharactersCard;
+export default memo(CharactersCard);

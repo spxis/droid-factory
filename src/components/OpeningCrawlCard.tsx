@@ -1,10 +1,11 @@
+import { memo, useMemo } from 'react';
 import type { OpeningCrawlCardProps } from '@/types';
 
 import { normalizeOpeningCrawl } from '@/utils/normalize';
 
 
 function OpeningCrawlCard({ crawl }: OpeningCrawlCardProps) {
-    const paragraphs = normalizeOpeningCrawl(crawl ?? undefined);
+    const paragraphs = useMemo(() => normalizeOpeningCrawl(crawl ?? undefined), [crawl]);
     if (!paragraphs.length) { return null; }
 
     return (
@@ -20,4 +21,4 @@ function OpeningCrawlCard({ crawl }: OpeningCrawlCardProps) {
 }
 
 export { OpeningCrawlCard };
-export default OpeningCrawlCard;
+export default memo(OpeningCrawlCard);

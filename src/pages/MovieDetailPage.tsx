@@ -1,4 +1,5 @@
 import { Link, useLocation, useParams } from 'react-router-dom';
+import { useMemo } from 'react';
 
 import CharactersCard from '@/components/CharactersCard';
 import DetailsCard from '@/components/DetailsCard';
@@ -42,6 +43,15 @@ const MovieDetailPage = () => {
         );
     }
 
+    const detailsLabels = useMemo(() => ({ episode: LABEL_EPISODE, director: LABEL_DIRECTOR, producers: LABEL_PRODUCERS }), []);
+    const titleLabels = useMemo(() => ({ episode: LABEL_EPISODE }), []);
+    const omdbBundle = useMemo(() => ({
+        genre: omdb?.genre ?? null,
+        runtime: omdb?.runtime ?? null,
+        imdbRating: omdb?.imdbRating ?? null,
+        metascore: omdb?.metascore ?? null,
+    }), [omdb?.genre, omdb?.runtime, omdb?.imdbRating, omdb?.metascore]);
+
     return (
         <div className="max-w-[800px] w-full mx-auto px-4 sm:px-6">
             <Link className="text-yellow-400 hover:text-yellow-300 transition-colors" to="/">{BACK}</Link>
@@ -57,7 +67,7 @@ const MovieDetailPage = () => {
                         imdbRating={omdb?.imdbRating ?? null}
                         genre={omdb?.genre ?? null}
                         runtime={omdb?.runtime ?? null}
-                        labels={{ episode: LABEL_EPISODE }}
+                        labels={titleLabels}
                     />
 
                     {/* Cards grid for Crawl, Details, Plot, Characters */}
@@ -65,13 +75,8 @@ const MovieDetailPage = () => {
                         <OpeningCrawlCard crawl={film.openingCrawl} />
                         <DetailsCard
                             film={film}
-                            labels={{ episode: LABEL_EPISODE, director: LABEL_DIRECTOR, producers: LABEL_PRODUCERS }}
-                            omdb={{
-                                genre: omdb?.genre ?? null,
-                                runtime: omdb?.runtime ?? null,
-                                imdbRating: omdb?.imdbRating ?? null,
-                                metascore: omdb?.metascore ?? null,
-                            }}
+                            labels={detailsLabels}
+                            omdb={omdbBundle}
                         />
                         <OmdbPlotCard plot={omdb?.plot} imdbID={omdb?.imdbID} />
                         <CharactersCard characters={film.characterConnection?.characters} />

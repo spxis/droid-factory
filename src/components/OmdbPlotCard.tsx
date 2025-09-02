@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { OmdbPlotCardProps } from '@/types';
 
 function OmdbPlotCard({ plot, imdbID }: OmdbPlotCardProps) {
@@ -22,4 +23,4 @@ function OmdbPlotCard({ plot, imdbID }: OmdbPlotCardProps) {
 }
 
 export { OmdbPlotCard };
-export default OmdbPlotCard;
+export default memo(OmdbPlotCard);

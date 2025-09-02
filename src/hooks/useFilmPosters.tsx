@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { fetchPosterUrl } from "@/lib/omdb";
 import { Film } from "@/types";
@@ -7,6 +7,8 @@ const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
 
 const useFilmPosters = (films: Film[]) => {
     const [posters, setPosters] = useState<Record<string, string>>({});
+
+    const filmKeys = useMemo(() => films.map(f => f.id).join('|'), [films]);
 
     useEffect(() => {
         let cancelled = false;
@@ -40,7 +42,7 @@ const useFilmPosters = (films: Film[]) => {
 
         fetchMissing();
         return () => { cancelled = true; };
-    }, [films, posters]);
+    }, [filmKeys]);
 
     return posters;
 

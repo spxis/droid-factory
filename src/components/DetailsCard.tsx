@@ -1,13 +1,14 @@
+import { memo, useMemo } from 'react';
 import type { DetailsCardProps } from '@/types';
 
 function DetailsCard({ film, labels, omdb }: DetailsCardProps) {
-    const L = {
+    const L = useMemo(() => ({
         episode: 'Episode',
         director: 'Director',
         producers: 'Producers',
         ...labels,
-    } as const;
-    const year = film.releaseDate ? film.releaseDate.slice(0, 4) : null;
+    } as const), [labels]);
+    const year = useMemo(() => (film.releaseDate ? film.releaseDate.slice(0, 4) : null), [film.releaseDate]);
 
     return (
         <div className="rounded-xl ring-1 ring-zinc-800 bg-zinc-900/40 p-4">
@@ -65,4 +66,4 @@ function DetailsCard({ film, labels, omdb }: DetailsCardProps) {
 }
 
 export { DetailsCard };
-export default DetailsCard;
+export default memo(DetailsCard);

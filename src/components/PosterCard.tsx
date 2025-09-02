@@ -1,7 +1,8 @@
+import { memo, useMemo } from 'react';
 import type { PosterCardProps } from '@/types';
 
 function PosterCard({ src, alt, fallbackSrc }: PosterCardProps) {
-    const url = src || fallbackSrc;
+    const url = useMemo(() => src || fallbackSrc, [src, fallbackSrc]);
 
     return (
         <div className="rounded-xl ring-1 ring-zinc-800 bg-zinc-900/40 p-3">
@@ -13,4 +14,4 @@ function PosterCard({ src, alt, fallbackSrc }: PosterCardProps) {
 }
 
 export { PosterCard };
-export default PosterCard;
+export default memo(PosterCard);

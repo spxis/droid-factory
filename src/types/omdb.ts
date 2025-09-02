@@ -1,6 +1,15 @@
 // OMDB type declarations moved out of lib for consistency
 
-export interface OMDBSearchItem {
+type OmdbLite = {
+    plot?: string;
+    metascore?: string;
+    genre?: string;
+    runtime?: string;
+    imdbID?: string;
+    imdbRating?: string;
+};
+
+interface OMDBSearchItem {
   Title: string;
   Year?: string;
   Poster?: string;
@@ -8,7 +17,7 @@ export interface OMDBSearchItem {
   Type?: string;
 }
 
-export interface OMDBMovieDetails {
+interface OMDBMovieDetails {
   Title: string;
   Year?: string;
   Poster?: string;
@@ -21,3 +30,5 @@ export interface OMDBMovieDetails {
   imdbID: string;
   imdbRating?: string; // e.g. "8.6"
 }
+
+export type { OMDBSearchItem, OMDBMovieDetails, OmdbLite }

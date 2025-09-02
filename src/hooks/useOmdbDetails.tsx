@@ -1,15 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { fetchMovieDetails } from "@/lib/omdb";
-
-type OmdbLite = {
-    plot?: string;
-    metascore?: string;
-    genre?: string;
-    runtime?: string;
-    imdbID?: string;
-    imdbRating?: string;
-};
+import { OmdbLite } from "@/types/omdb";
 
 const cache = new Map<string, { poster: string; omdb: OmdbLite }>();
 

@@ -1,8 +1,9 @@
+import { memo, useMemo } from 'react';
 import type { TitleCardProps } from '@/types';
 
 function TitleCard({ title, episodeID, releaseDate, imdbRating, genre, runtime, labels }: TitleCardProps) {
-    const year = releaseDate ? releaseDate.slice(0, 4) : null;
-    const L = { episode: 'Episode', ...(labels || {}) } as const;
+    const year = useMemo(() => (releaseDate ? releaseDate.slice(0, 4) : null), [releaseDate]);
+    const L = useMemo(() => ({ episode: 'Episode', ...(labels || {}) } as const), [labels]);
 
     return (
         <div className="rounded-xl ring-1 ring-zinc-800 bg-zinc-900/40 p-4 text-center">
@@ -21,4 +22,4 @@ function TitleCard({ title, episodeID, releaseDate, imdbRating, genre, runtime, 
 }
 
 export { TitleCard };
-export default TitleCard;
+export default memo(TitleCard);
