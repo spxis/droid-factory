@@ -2,8 +2,7 @@
 import { gql, useQuery } from '@apollo/client';
 import { createContext, useContext, useMemo } from 'react';
 
-import type { SlugMapProviderProps , Film } from '@/types';
-
+import type { SlugMapProviderProps, Film } from '@/types';
 
 import { slugifyTitle } from '@/lib/slug';
 

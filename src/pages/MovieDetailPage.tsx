@@ -10,8 +10,8 @@ import PosterCard from '@/components/PosterCard';
 import TitleCard from '@/components/TitleCard';
 import { useFilmBySlug } from '@/hooks/useFilmBySlug';
 import { useOmdbDetails } from '@/hooks/useOmdbDetails';
+import { FALLBACK_POSTER } from '@/lib/constants';
 
-const FALLBACK_POSTER = 'https://placehold.co/400x600/0b0b0b/9ca3af?text=No+Poster';
 
 const LOADING_MESSAGE = 'detail.loading';
 const ERROR_MESSAGE = 'detail.error';

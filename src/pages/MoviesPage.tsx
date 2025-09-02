@@ -7,8 +7,8 @@ import type { Film } from '@/types';
 import FilmCard from '@/components/FilmCard';
 import { useFilmPosters } from '@/hooks/useFilmPosters';
 import { useFilms } from '@/hooks/useFilms';
+import { FALLBACK_POSTER } from '@/lib/constants';
 
-const FALLBACK_POSTER = 'https://placehold.co/400x600/0b0b0b/9ca3af?text=No+Poster';
 const LOADING_MESSAGE = 'movies.loading';
 const ERROR_MESSAGE = 'movies.error';
 const HEADING_TITLE = 'movies.heading';

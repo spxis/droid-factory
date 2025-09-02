@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { FALLBACK_POSTER, POSTER_STORAGE_KEY } from "@/lib/constants";
 import { fetchPosterUrl } from "@/lib/omdb";
 import { Film } from "@/types";
 
-const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
-
 // In-memory cache survives route changes within the SPA
 const postersCache = new Map<string, string>();
-const STORAGE_KEY = 'df.posterUrls.v1';
+const STORAGE_KEY = POSTER_STORAGE_KEY;
 
 const useFilmPosters = (films: Film[]) => {
   const [posters, setPosters] = useState<Record<string, string>>(() => {

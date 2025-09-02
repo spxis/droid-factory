@@ -36,7 +36,18 @@
     "goHome": "Go home"
   },
   "character": {
+    "loading": "Loading...",
+    "error": "Error loading character",
+    "back": "← Back",
+    "notFoundTitle": "Not Found",
+    "notFoundBody": "We couldn't find that character.",
+    "noFilms": "No films found.",
+    "relatedPosters": {
+      "heading": "Related Posters",
+      "none": "No related posters found."
+    },
     "labels": {
+      "films": "Films",
       "species": "Species",
       "homeworld": "Homeworld",
       "birthYear": "Birth Year",

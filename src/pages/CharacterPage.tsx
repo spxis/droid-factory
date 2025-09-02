@@ -1,31 +1,15 @@
 import { gql, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 
 import type { OMDBSearchItem, FilmRef, Person } from '@/types';
 
 import CharacterCard from '@/components/CharacterCard';
+import { FALLBACK_POSTER, FALLBACK_CHARACTER_IMAGE } from '@/lib/constants';
 import { fetchCharacterImageUrl, fetchCharacterSearchResults, fetchPosterUrl } from '@/lib/omdb';
 import { slugifyTitle } from '@/lib/slug';
 import { fetchWookieeCharacterImageUrl } from '@/lib/wookiee';
-
-const LOADING_MESSAGE = 'Loading...';
-const ERROR_MESSAGE = 'Error loading character';
-const NOT_FOUND_TITLE = 'Not Found';
-const NOT_FOUND_BODY = "We couldn't find that character.";
-const BACK = '← Back';
-const LABEL_SPECIES = 'Species';
-const LABEL_HOMEWORLD = 'Homeworld';
-const LABEL_FILMS = 'Films';
-const LABEL_BIRTH_YEAR = 'Birth Year';
-const LABEL_GENDER = 'Gender';
-const LABEL_HEIGHT = 'Height';
-const LABEL_MASS = 'Mass';
-const LABEL_EYE_COLOR = 'Eye Color';
-const LABEL_HAIR_COLOR = 'Hair Color';
-const LABEL_SKIN_COLOR = 'Skin Color';
-const FALLBACK_IMAGE = 'https://placehold.co/300x450?text=No+Image';
-const FALLBACK_POSTER = 'https://placehold.co/400x600?text=No+Poster';
 
 // Visual Guide disabled (site no longer reliable). Keeping helpers commented for future swap-in.
 // const RAW_VG_BASE = (import.meta.env.VITE_SW_VISUAL_GUIDE_BASE as string | undefined) || 'https://starwars-visualguide.com/assets/img';
@@ -94,6 +78,7 @@ function checkImage(url: string): Promise<boolean> {
 const CharacterPage = () => {
   const { id } = useParams();
   const finalId = id;
+  const { t } = useTranslation();
 
   // Debug: log the resolved ID param
   useEffect(() => {
@@ -175,7 +160,7 @@ const CharacterPage = () => {
       }
 
       if (!cancelled) {
-        const finalUrl = chosen || FALLBACK_IMAGE;
+        const finalUrl = chosen || FALLBACK_CHARACTER_IMAGE;
 
         if (!chosen) {
           console.log('[CharacterPage] image: using fallback image');
@@ -277,43 +262,43 @@ const CharacterPage = () => {
     return () => { cancelled = true; };
   }, [films, filmPosters]);
 
-  if (loading) { return <p>{LOADING_MESSAGE}</p>; }
+  if (loading) { return <p>{t('character.loading')}</p>; }
 
   if (error) {
     console.error('[CharacterPage] error:', error);
-    return <p>{ERROR_MESSAGE}</p>;
+    return <p>{t('character.error')}</p>;
   }
 
   if (!person) {
     return (
       <div className="max-w-[800px] mx-auto px-4">
-        <Link className="text-yellow-400" to="/">{BACK}</Link>
-        <h1 className="text-2xl font-bold mb-2">{NOT_FOUND_TITLE}</h1>
-        <p className="mb-4">{NOT_FOUND_BODY}</p>
+        <Link className="text-yellow-400" to="/">{t('character.back', '← Back')}</Link>
+        <h1 className="text-2xl font-bold mb-2">{t('character.notFoundTitle', 'Not Found')}</h1>
+        <p className="mb-4">{t('character.notFoundBody', "We couldn't find that character.")}</p>
       </div>
     );
   }
 
   return (
     <div className="max-w-[800px] w-full mx-auto px-4 sm:px-6">
-      <Link className="text-yellow-400 hover:text-yellow-300 transition-colors" to="/">{BACK}</Link>
+      <Link className="text-yellow-400 hover:text-yellow-300 transition-colors" to="/">{t('character.back', '← Back')}</Link>
 
       <section className="mt-4 rounded-2xl ring-1 ring-yellow-900/25 bg-gradient-to-b from-zinc-900/70 to-black/60 shadow-xl shadow-black/30 p-5 md:p-8">
         <div className="flex flex-col items-center gap-4">
           <CharacterCard
             name={person.name}
             imageUrl={imageUrl}
-            fallbackImage={FALLBACK_IMAGE}
+            fallbackImage={FALLBACK_CHARACTER_IMAGE}
             labels={{
-              species: LABEL_SPECIES,
-              homeworld: LABEL_HOMEWORLD,
-              birthYear: LABEL_BIRTH_YEAR,
-              gender: LABEL_GENDER,
-              height: LABEL_HEIGHT,
-              mass: LABEL_MASS,
-              eyeColor: LABEL_EYE_COLOR,
-              hairColor: LABEL_HAIR_COLOR,
-              skinColor: LABEL_SKIN_COLOR,
+              species: t('character.labels.species'),
+              homeworld: t('character.labels.homeworld'),
+              birthYear: t('character.labels.birthYear'),
+              gender: t('character.labels.gender'),
+              height: t('character.labels.height'),
+              mass: t('character.labels.mass'),
+              eyeColor: t('character.labels.eyeColor'),
+              hairColor: t('character.labels.hairColor'),
+              skinColor: t('character.labels.skinColor'),
             }}
             speciesName={person.species?.name}
             homeworldName={person.homeworld?.name}
@@ -331,13 +316,13 @@ const CharacterPage = () => {
           {/* Films */}
           <div className="w-full mt-4">
             <h2 className="text-xl font-bold mb-3">
-              {LABEL_FILMS}
+              {t('character.labels.films', 'Films')}
               <span className="ml-2 text-sm font-normal text-zinc-400">
-                                ({films.length})
+                ({films.length})
               </span>
             </h2>
             {films.length === 0 ? (
-              <div className="text-sm text-zinc-400">No films found.</div>
+              <div className="text-sm text-zinc-400">{t('character.noFilms', 'No films found.')}</div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {films.map((f: FilmRef) => {
@@ -366,9 +351,9 @@ const CharacterPage = () => {
 
           {/* OMDB results (posters and titles) */}
           <div className="w-full mt-6">
-            <h2 className="text-xl font-bold mb-3">Related Posters</h2>
+            <h2 className="text-xl font-bold mb-3">{t('character.relatedPosters.heading', 'Related Posters')}</h2>
             {omdbResults.length === 0 ? (
-              <div className="text-sm text-zinc-400">No related posters found.</div>
+              <div className="text-sm text-zinc-400">{t('character.relatedPosters.none', 'No related posters found.')}</div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {omdbResults.map((item) => (
