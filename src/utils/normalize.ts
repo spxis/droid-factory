@@ -1,4 +1,4 @@
- function normalizeOpeningCrawl(raw?: string | null): string[] {
+function normalizeOpeningCrawl(raw?: string | null): string[] {
   if (!raw) {return [];}
   
   const normalized = raw.replace(/\r\n?/g, '\n').trim();

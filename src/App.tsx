@@ -3,7 +3,7 @@ import { lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 import { SlugMapProvider } from '@/hooks/useSlugMap';
-import client from '@/lib/apollo';
+import { client } from '@/lib/apollo';
 
 import './App.css';
 

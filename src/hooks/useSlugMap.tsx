@@ -1,9 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import { gql, useQuery } from '@apollo/client';
 import { createContext, useContext, useMemo } from 'react';
-import type { SlugMapProviderProps } from '@/types';
 
-import type { Film } from '@/types';
+import type { SlugMapProviderProps , Film } from '@/types';
+
 
 import { slugifyTitle } from '@/lib/slug';
 

@@ -7,7 +7,7 @@ import type { OMDBSearchItem, OMDBMovieDetails } from '@/types';
 const OMDB_API_KEY = import.meta.env.VITE_OMDB_API_KEY || '';
 const OMDB_SEARCH_URL = import.meta.env.VITE_OMDB_API_URL || 'https://www.omdbapi.com/';
 
-export async function fetchPosterUrl(title: string, year: string): Promise<string | null> {
+async function fetchPosterUrl(title: string, year: string): Promise<string | null> {
   if (!OMDB_API_KEY) {
     return null;
   }
@@ -35,7 +35,7 @@ export async function fetchPosterUrl(title: string, year: string): Promise<strin
 
 // Attempt to find a representative image for a character by name using OMDB's search API.
 // We first search by the raw name, then try a Star Wars-qualified query.
-export async function fetchCharacterImageUrl(name: string): Promise<string | null> {
+async function fetchCharacterImageUrl(name: string): Promise<string | null> {
   if (!OMDB_API_KEY) {
     return null;
   }
@@ -46,19 +46,19 @@ export async function fetchCharacterImageUrl(name: string): Promise<string | nul
     const url = `${OMDB_SEARCH_URL}?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(q)}`;
 
     try {
-        const res = await fetch(url);
+      const res = await fetch(url);
 
-        if (!res.ok) {
-            continue;
-        }
+      if (!res.ok) {
+        continue;
+      }
         
-        const data: { Search?: Array<{ Poster?: string }>; [k: string]: unknown } = await res.json();
-        const items = Array.isArray(data?.Search) ? data.Search : [];
-        const withPoster = items.find((it) => it?.Poster && it.Poster !== 'N/A');
+      const data: { Search?: Array<{ Poster?: string }>; [k: string]: unknown } = await res.json();
+      const items = Array.isArray(data?.Search) ? data.Search : [];
+      const withPoster = items.find((it) => it?.Poster && it.Poster !== 'N/A');
 
-        if (withPoster) {
-            return withPoster.Poster as string;
-        }
+      if (withPoster) {
+        return withPoster.Poster as string;
+      }
     } catch {
       // ignore and try next query
     }
@@ -67,7 +67,7 @@ export async function fetchCharacterImageUrl(name: string): Promise<string | nul
   return null;
 }
 
-export async function fetchCharacterSearchResults(name: string): Promise<OMDBSearchItem[]> {
+async function fetchCharacterSearchResults(name: string): Promise<OMDBSearchItem[]> {
   if (!OMDB_API_KEY) {
     return [];
   }
@@ -104,11 +104,10 @@ export async function fetchCharacterSearchResults(name: string): Promise<OMDBSea
 }
 
 // Detailed OMDB response for a movie title + year
-export async function fetchMovieDetails(title: string, year?: string): Promise<OMDBMovieDetails | null> {
+async function fetchMovieDetails(title: string, year?: string): Promise<OMDBMovieDetails | null> {
   if (!OMDB_API_KEY) {
     return null;
   }
-
   const url = `${OMDB_SEARCH_URL}?apikey=${OMDB_API_KEY}&t=${encodeURIComponent(title)}${year ? `&y=${year}` : ''}`;
   try {
     const res = await fetch(url);
@@ -126,3 +125,5 @@ export async function fetchMovieDetails(title: string, year?: string): Promise<O
     return null;
   }
 }
+
+export { fetchPosterUrl, fetchCharacterImageUrl, fetchCharacterSearchResults, fetchMovieDetails };

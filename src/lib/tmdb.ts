@@ -5,7 +5,7 @@ const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY || '';
 const TMDB_SEARCH_URL = 'https://api.themoviedb.org/3/search/movie';
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
 
-export async function fetchPosterUrl(title: string, year: string): Promise<string | null> {
+async function fetchPosterUrl(title: string, year: string): Promise<string | null> {
   if (!TMDB_API_KEY) {
     return null;
   }
@@ -27,3 +27,5 @@ export async function fetchPosterUrl(title: string, year: string): Promise<strin
     return null;
   }
 }
+
+export { fetchPosterUrl };

@@ -1,5 +1,5 @@
 // Film domain model used across UI and queries
-export interface Film {
+interface Film {
   id: string;
   title: string;
   episodeID: number;
@@ -11,17 +11,19 @@ export interface Film {
 }
 
 // Minimal film reference used in person film connections
-export interface FilmRef {
+interface FilmRef {
   id: string;
   title: string;
   releaseDate?: string;
 }
 
 // Query result shapes
-export interface FilmsQueryResult {
+interface FilmsQueryResult {
   allFilms: {
   films?: Film[];
   edges?: { node: Film }[];
   totalCount?: number;
   };
 }
+
+export type { Film, FilmRef, FilmsQueryResult };

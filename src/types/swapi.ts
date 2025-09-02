@@ -1,24 +1,24 @@
 // Rich person shape used on the Character page
 import type { FilmRef } from './film';
 
-export interface Planet {
+interface Planet {
   id: string;
   name: string;
 }
 
-export interface Species {
+interface Species {
   id: string;
   name: string;
 }
 
-export interface Character {
+interface Character {
   id: string;
   name: string;
   species: Species | null;
   homeworld: Planet | null;
 }
 
-export interface Person {
+interface Person {
   id: string;
   name: string;
   birthYear?: string | null;
@@ -37,7 +37,7 @@ export interface Person {
   };
 }
 
-export interface FilmDetails {
+interface FilmDetails {
   id: string;
   title: string;
   director: string;
@@ -49,3 +49,5 @@ export interface FilmDetails {
     characters: Character[];
   };
 }
+
+export type { Planet, Species, Character, Person, FilmDetails };

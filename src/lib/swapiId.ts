@@ -8,7 +8,7 @@ function b64decode(input: string): string {
   return Buffer.from(input, 'base64').toString('utf-8');
 }
 
-export function decodeGlobalId(globalId: string): { type: string | null; raw: string | null; numericId: number | null } {
+function decodeGlobalId(globalId: string): { type: string | null; raw: string | null; numericId: number | null } {
   try {
     const decoded = b64decode(globalId);
     const [type, rawId] = decoded.split(':');
@@ -19,3 +19,5 @@ export function decodeGlobalId(globalId: string): { type: string | null; raw: st
     return { type: null, raw: null, numericId: null };
   }
 }
+
+export { decodeGlobalId };

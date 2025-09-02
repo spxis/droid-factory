@@ -28,21 +28,21 @@ const FILM_DETAIL_QUERY = gql`
 `;
 
 const useFilmBySlug = (slug: string | undefined, passedId?: string) => {
-    const { slugToId, ready } = useSlugMap();
-    const resolvedId = useMemo(() => {
-        return passedId || (slug ? slugToId[slug] : undefined);
-    }, [passedId, slug, slugToId]);
+  const { slugToId, ready } = useSlugMap();
+  const resolvedId = useMemo(() => {
+    return passedId || (slug ? slugToId[slug] : undefined);
+  }, [passedId, slug, slugToId]);
 
-    const { data, loading, error } = useQuery<{ film: FilmDetails }>(FILM_DETAIL_QUERY, {
-        skip: !resolvedId,
-        variables: { id: resolvedId },
-    });
+  const { data, loading, error } = useQuery<{ film: FilmDetails }>(FILM_DETAIL_QUERY, {
+    skip: !resolvedId,
+    variables: { id: resolvedId },
+  });
 
-    return {
-        film: data?.film || null,
-        loading: loading || !ready,
-        error
-    };
+  return {
+    film: data?.film || null,
+    loading: loading || !ready,
+    error
+  };
 }
 
 export { useFilmBySlug };

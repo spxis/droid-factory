@@ -58,10 +58,11 @@ export default tseslint.config(
       'import/no-unresolved': 'off',
   'import/named': 'off',
   'react/prop-types': 'off',
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
-    },
+  'react-refresh/only-export-components': [
+      'warn',
+      { allowConstantExport: true },
+    ],
+    indent: ['error', 2, { SwitchCase: 1 }],
   },
+},
 )
